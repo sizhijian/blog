@@ -6,7 +6,7 @@
 <style scoped>
   .header {
     height: 40px;
-    background: #1c2438;
+    background: #1c2438;text-align: center;
   }
   .header h1{
     height:100%;color: #f8f8f9;line-height: 40px;display: inline-block;vertical-align: top;}
