@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeaderItem></HeaderItem>
+    <HeaderItem willLogin=true></HeaderItem>
     <div class="bg-full" ref="bgFull">
       <Row>
         <Col class="wrap-form" :xs="20" :lg="6">
