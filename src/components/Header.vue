@@ -11,18 +11,15 @@
         </span>
         <Button @click="handleLogout" type="primary" size="small"><Icon type="log-out"></Icon> 退出</Button>
       </span>
-
-        <router-link v-else  to="/login">
-          <Button type="primary" size="small">登录</Button>
-        </router-link>
+      <router-link v-else  to="/login">
+        <Button type="primary" size="small">登录</Button>
+      </router-link>
+      <Button v-if="!isPost" type="primary" size="small" @click="handlePublish">发表文章</Button>
     </div>
   </div>
 </template>
 <style scoped>
-  .header {
-    height: 40px;
-    background: #1c2438;padding: 0 2%;
-  }
+  .header {height: 40px;background: #1c2438;padding: 0 2%;position: fixed;top: 0;left: 0;z-index: 2;width: 100%;}
   .header h1{
     height:100%;color: #f8f8f9;line-height: 40px;display: inline-block;vertical-align: top;}
   .header img{
@@ -62,7 +59,7 @@
 
   export default {
     name: 'header',
-    props: ['isHome','isProd','isEntry','willLogin'],
+    props: ['isPost','isProd','isEntry','willLogin'],
     data() {
       return {
         logined :Store.state.logined,
@@ -72,12 +69,19 @@
     },
     methods: {
       handleLogout() {
-                removeCookie('userName');
+        removeCookie('userName');
         removeCookie('pwd');
         removeCookie('nickname');
         Store.commit('logout');
         this.logined = Store.state.logined;
 //        this.$router.push({path:'/login'})
+      },
+      handlePublish() {
+        if (this.logined) {
+          this.$router.push({path: '/post'});
+        }else{
+          this.$Message.warning('请先登录!');
+        }
       },
       toggleBtns() {
         this.showBtn = !this.showBtn;

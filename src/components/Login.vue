@@ -156,7 +156,7 @@
           if (valid) {
             //this.$http.jsonp('http://api.map.baidu.com/telematics/v3/weather?location=北京&output=json&ak=6tYzTvGZSOpYB5Oc2YGGOKt8').
             this.$http.post(
-              'http://sizhijian.com:3000/login',
+              CONST_apiUrl + '/login',
               {
                 username: this.formLogin.username,
                 password: md5(this.formLogin.password)
@@ -187,7 +187,7 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             this.$http.post(
-              'http://sizhijian.com:3000/register',
+              CONST_apiUrl +'/register',
               {
                 username: this.formRegister.username,
                 password: md5(this.formRegister.password),
