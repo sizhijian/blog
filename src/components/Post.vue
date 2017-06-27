@@ -70,8 +70,11 @@
               type:this.formArticle.type,
               content:this.formArticle.content
             }).then((response)=>{
-              console.log(response)
-              this.$Message.error(response);
+              if (response.body.state == 1) {
+                this.$Message.success(response.body.info);
+              } else {
+                this.$Message.error(response.body.info);
+              }
             });
           }else {
             this.$Message.error('表单验证失败!');

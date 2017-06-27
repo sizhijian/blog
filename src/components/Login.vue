@@ -45,27 +45,10 @@
   </div>
 </template>
 <style scoped>
-  .header{
-    position: fixed;
-    top:0;
-    left:0;
-    width: 100%;
-    z-index: 1;}
-  .bg-full{
-    position: fixed;width: 100%;
-    height:100%;
-    background: url("../assets/bg-01.jpg")  50% 50% / auto 100% no-repeat;
-  }
-  .bg-full .ivu-row{
-    position: static;}
-  .wrap-form{
-    position: absolute;
-    left:0;
-    top:0;
-    right:0;
-    bottom: 0;
-    height: 348px;
-    margin:auto;}
+  .header{position: fixed;top:0;left:0;width: 100%;z-index: 1;}
+  .bg-full{position: fixed;width: 100%;height:100%;background: url("../assets/bg-01.jpg")  50% 50% / auto 100% no-repeat;}
+  .bg-full .ivu-row{position: static;}
+  .wrap-form{position: absolute;left:0;top:0;right:0;bottom: 0;height: 348px;margin:auto;}
 </style>
 <script>
   import FooterItem from './Footer'
@@ -171,7 +154,7 @@
       handleLogin(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            //                    this.$http.jsonp('http://api.map.baidu.com/telematics/v3/weather?location=北京&output=json&ak=6tYzTvGZSOpYB5Oc2YGGOKt8').
+            //this.$http.jsonp('http://api.map.baidu.com/telematics/v3/weather?location=北京&output=json&ak=6tYzTvGZSOpYB5Oc2YGGOKt8').
             this.$http.post(
               'http://sizhijian.com:3000/login',
               {
