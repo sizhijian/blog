@@ -170,7 +170,7 @@
                 setCookie("nickname", response.body.nickname, 7);
                 Store.commit('login');
                 Store.commit('getNickName', response.body.nickname);
-                this.$router.push({path: '/home'});
+                this.$router.push({path: '/'});
               } else {
                 this.$Message.error(response.body.info);
               }
