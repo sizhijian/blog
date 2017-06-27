@@ -3,7 +3,7 @@
     <HeaderItem willLogin=true></HeaderItem>
     <div class="bg-full" ref="bgFull">
       <Row>
-        <Col class="wrap-form" :xs="20" :lg="6">
+        <Col class="wrap-form" :xs="20" :sm="8" :md="6" :lg="4">
         <Tabs value="name1" type="card">
           <Tab-pane label="登录" name="name1">
             <Form ref="formLogin" :model="formLogin" :rules="rulesLogin">

@@ -2,7 +2,7 @@
   <div>
       <HeaderItem logined=logined></HeaderItem>
     <Row>
-      <Col :xs="8" :lg="4">
+      <Col :xs="8" :md="5"  :lg="4">
         <Menu class="menu-side" :theme="theme2" @on-select="handleSelect" :open-names="[1]" ref="menu_side"
               active-name="1-1">
           <Submenu :name="(index+1)" v-for="(item , index) in diretory" :key="index">
@@ -23,7 +23,7 @@
         </Menu>
         <span style="color:transparent">1</span>
       </Col>
-      <Col :xs="16" :lg="20">
+      <Col :xs="16" :md="19" :lg="20">
         <div class="wrap-content">
           <h2 class="title">{{title}}</h2>
           <div v-html="compiledMarkdown"></div>
