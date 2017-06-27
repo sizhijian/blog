@@ -34,4 +34,5 @@ body {
   color: #2c3e50;
   padding-top: 40px;
 }
+pre{overflow: auto;-webkit-overflow-scrolling: touch;}
 </style>
