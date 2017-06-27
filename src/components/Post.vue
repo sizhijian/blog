@@ -42,7 +42,7 @@
     margin:10px auto;}
 </style>
 <script>
-  import HeaderItem from './header'
+  import HeaderItem from './Header'
   import marked from 'marked'
   import Vue from 'vue'
   import VueResource from 'vue-resource'
