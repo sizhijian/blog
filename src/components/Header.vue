@@ -1,22 +1,24 @@
 <template>
+<div>
   <div class="header">
     <img src="./../assets/logo.png">
     <h1>&nbsp;Zhijian's blog</h1>
     <div class="userinfo" v-if="!willLogin">
       <span v-if="logined">Hi!
-        <span class="name" @click="toggleBtns">{{nickName}}
-          <ul v-if="showBtn">
-            <li></li>
-          </ul>
-        </span>
-        <Button @click="handleLogout" type="primary" size="small"><Icon type="log-out"></Icon> 退出</Button>
+          <span class="name" @click="toggleBtns">{{nickName}}
+            <ul v-if="showBtn">
+              <li></li>
+            </ul>
+          </span>
+      <Button @click="handleLogout" type="primary" size="small"><Icon type="log-out"></Icon> 退出</Button>
       </span>
-      <router-link v-else  to="/login">
+      <router-link v-else to="/login">
         <Button type="primary" size="small">登录</Button>
       </router-link>
       <Button v-if="!isPost" type="primary" size="small" @click="handlePublish">发表文章</Button>
     </div>
   </div>
+</div>
 </template>
 <style scoped>
   .header {height: 40px;background: #1c2438;padding: 0 2%;position: fixed;top: 0;left: 0;z-index: 2;width: 100%;}

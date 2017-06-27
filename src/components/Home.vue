@@ -5,7 +5,7 @@
       <Col :xs="8" :lg="4">
         <Menu class="menu-side" :theme="theme2" @on-select="handleSelect" :open-names="[1]" ref="menu_side"
               active-name="1-1">
-          <Submenu :name="(index+1)" v-for="(item , index) in diretory">
+          <Submenu :name="(index+1)" v-for="(item , index) in diretory" :key="index">
             <template slot="title">
               <span v-if="item.type == 'JavaScript'">
                 <Icon type="social-javascript"></Icon>
@@ -16,7 +16,7 @@
 
               {{item.type}}
             </template>
-            <Menu-item v-for="(subitem , subindex) in item.contain" :name="(index+1)+'-' + (subindex+1)">
+            <Menu-item v-for="(subitem , subindex) in item.contain" :key="index" :name="(index+1)+'-' + (subindex+1)">
               {{subitem.title}}
             </Menu-item>
           </Submenu>
@@ -26,9 +26,7 @@
       <Col :xs="16" :lg="20">
         <div class="wrap-content">
           <h2 class="title">{{title}}</h2>
-          <!--<div v-html="formatContent"></div>-->
           <div v-html="compiledMarkdown"></div>
-          <!--<div v-html="content"></div>-->
         </div>
       </Col>
     </Row>
