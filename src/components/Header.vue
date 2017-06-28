@@ -1,37 +1,124 @@
 <template>
-<div>
   <div class="header">
-    <img src="./../assets/logo.png">
-    <h1>&nbsp;Zhijian's blog</h1>
-    <div class="userinfo" v-if="!willLogin">
-      <span v-if="logined">Hi!
-          <span class="name" @click="toggleBtns">{{nickName}}
-            <ul v-if="showBtn">
-              <li></li>
-            </ul>
-          </span>
-      <Button @click="handleLogout" type="primary" size="small"><Icon type="log-out"></Icon> 退出</Button>
-      </span>
-      <router-link v-else to="/login">
-        <Button type="primary" size="small">登录</Button>
+    <div class="container">
+      <router-link to="/">
+        <img class="logo" src="./../assets/logo.png">
+        <h1 class="title">Zhijian</h1>
       </router-link>
-      <Button v-if="!isPost" type="primary" size="small" @click="handlePublish">发表文章</Button>
+      <div class="userinfo" v-if="!willLogin">
+        <a class="publish" @click="handlePublish"><Icon type="edit" size="20" v-if="!isPost"></Icon></a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a class="avatar" v-if="logined" @click="toggleBtns">
+          <Icon size="28" type="ios-person"></Icon>
+          <Icon type="arrow-down-b"></Icon>
+        </a>
+        <router-link v-else to="/login">登录</router-link>
+        <div v-if="showBtn" class="dropdown-menu">
+          <div class="dropdown-item">欢迎你 , {{nickName}}</div>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item"><Icon type="person"></Icon>&nbsp;&nbsp;个人中心</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" @click="handleLogout"><Icon type="log-out"></Icon>&nbsp;&nbsp;登出</a>
+        </div>
+
+      </div>
     </div>
   </div>
-</div>
 </template>
 <style scoped>
-  .header {height: 40px;background: #1c2438;padding: 0 2%;position: fixed;top: 0;left: 0;z-index: 2;width: 100%;}
-  .header h1{
-    height:100%;color: #f8f8f9;line-height: 40px;display: inline-block;vertical-align: top;}
-  .header img{
-    height:80%;margin-top: 4px;}
-  .header .userinfo{display: inline-block;
-    color: #fff;line-height: 40px;vertical-align: top;font-size: 14px;padding-right: 2%;position: absolute;right: 0}
-  .name{position: relative;}
-  .name ul{
-    border:1px solid;position: absolute;
+  .header {
+    height: 54px;
+    background: #1e2327;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 11;
+    width: 100%;
+  }
+
+  .header .title {
+    height: 100%;
+    color: #f8f8f9;
+    line-height: 54px;
+    display: inline-block;
+    vertical-align: top;
+    font-size: 30px
+  }
+
+  .header .logo {
+    height: 40px;
+    margin: 7px 0 0 5px;
+  }
+
+  .header .userinfo {
+    display: inline-block;
+    color: #fff;
+    font-size: 14px;
+    padding-right: 2%;
+    float: right;
+    position: relative;
+    height: 54px;
+  }
+  .userinfo a{
+    line-height: 54px;
+    color: rgba(255, 255, 255, 0.75);
+  }
+  .userinfo a:hover{
+    color: rgba(255, 255, 255, 1);
+  }
+  .publish,.avatar{
+    height: 54px;
+    line-height: 54px;
+    display: inline-block;
+    vertical-align: top;
+  }
+  .avatar .ivu-icon{
+    vertical-align: middle;
+    height: 54px!important;
+    line-height: 54px;
+    display: inline-block;
+  }
+  .name ul {
+    border: 1px solid;
+    position: absolute;
     z-index: 1;
+  }
+
+  .dropdown-menu {
+    width: 180px;
+    position: absolute;
+    top: 55px;
+    right: 2px;
+    border: 1px solid rgba(27, 31, 35, 0.15);
+    border-radius: 4px;
+    box-shadow: 0 3px 12px rgba(27, 31, 35, 0.15);
+    background: #fff;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+  .dropdown-menu .dropdown-item {
+    display: block;
+    padding: 4px 10px 4px 15px;
+    overflow: hidden;
+    color: #24292e;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    line-height: normal;
+    height:auto;
+  }
+  .dropdown-menu a:hover{
+    color: #24292e;
+  }
+  .dropdown-menu li {
+    padding: 4px 10px 4px 15px;
+    line-height: 40px;
+    color: #24292e;
+    border-top: 1px
+  }
+
+  .dropdown-divider {
+    height: 1px;
+    margin: 8px 1px;
+    background-color: #e1e4e8;
   }
 </style>
 <script>
@@ -71,11 +158,11 @@
     },
     methods: {
       handleLogout() {
-        removeCookie('userName');
         removeCookie('pwd');
         removeCookie('nickname');
         Store.commit('logout');
         this.logined = Store.state.logined;
+        this.showBtn = false;
 //        this.$router.push({path:'/login'})
       },
       handlePublish() {
@@ -90,12 +177,12 @@
       }
     },
     mounted() {
-      if(''!=getCookie('userName') && 'error'!=getCookie('userName') &&'undefined'!=getCookie('userName')){
+      if(''!=getCookie('userName') && 'error'!=getCookie('userName') &&'undefined'!=getCookie('userName') && ''!=getCookie('pwd') && 'error'!=getCookie('pwd') &&'undefined'!=getCookie('pwd')){
         Store.commit('login');
         Store.commit('getNickName', getCookie('nickname'));
         this.logined = Store.state.logined;
         this.nickName = Store.state.nickName;
-        console.log("Cookie中的用户名:" + getCookie('userName'))
+        console.log("cookie user: " + getCookie('userName'))
       }else {
         console.log("现在是未登录状态..")
       }

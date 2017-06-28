@@ -1,43 +1,47 @@
 <template>
   <div>
     <HeaderItem logined=logined isPost=true></HeaderItem>
-    <Row>
-      <Col :lg="{span:10, offset: 1}"  :md="{span:10, offset: 1}"  :sm="{span:10, offset: 1}" :xs="{span: 22, offset: 1}">
-        <br>
-        <br>
-        <br>
-        <Form ref="formArticle" :model="formArticle" :label-width="70" :rules="rulesArticle">
-          <Form-item label="标题" prop="title">
-            <Input v-model="formArticle.title" placeholder="请输入标题"></Input>
-          </Form-item>
-          <Form-item label="类型" prop="type">
-            <Input v-model="formArticle.type" placeholder="请输入文章类型"></Input>
-          </Form-item>
-          <Form-item label="正文" prop="content">
-            <Input v-model="formArticle.content" type="textarea" :autosize="{minRows: 5,maxRows: 30}" placeholder="请输入正文"></Input>
-          </Form-item>
-          <Form-item>
-            <Button type="primary" @click="handleSubmit('formArticle')">提交</Button>
-            <Button type="ghost" @click="handleReset('formArticle')" style="margin-left: 8px">重置</Button>
-          </Form-item>
-        </Form>
-      </Col>
-      <Col :lg="{span:10, offset: 2}" :md="{span:10, offset: 2}" :sm="{span:10, offset: 2}" :xs="{span: 22, offset: 1}">
-        <br>
-        <h3>预览 :</h3>
-        <br>
-        <Card>
+    <div class="container">
+      <Row>
+        <Col :lg="{span:11, offset: 1}"  :md="{span:10, offset: 1}"  :sm="{span:10, offset: 1}" :xs="{span: 22, offset: 1}">
+          <br>
+          <br>
+          <br>
+          <Form ref="formArticle" :model="formArticle" :label-width="70" :rules="rulesArticle">
+            <Form-item label="标题" prop="title">
+              <Input v-model="formArticle.title" placeholder="请输入标题"></Input>
+            </Form-item>
+            <Form-item label="类型" prop="type">
+              <Select v-model="formArticle.type">
+                <Option v-for="item in typeList" :value="item" :key="item">{{item}}</Option>
+              </Select>
+            </Form-item>
+            <Form-item label="正文" prop="content">
+              <Input v-model="formArticle.content" type="textarea" :autosize="{minRows: 5,maxRows: 30}" placeholder="请输入正文"></Input>
+            </Form-item>
+            <Form-item>
+              <Button type="primary" @click="handleSubmit('formArticle')">提交</Button>
+              <Button type="ghost" @click="handleReset('formArticle')" style="margin-left: 8px">重置</Button>
+            </Form-item>
+          </Form>
+        </Col>
+        <Col :lg="{span:11, offset: 1}" :md="{span:10, offset: 2}" :sm="{span:10, offset: 2}" :xs="{span: 22, offset: 1}">
+          <br>
+          <h3>预览 :</h3>
+          <br>
+          <Card>
             <p slot="title">{{formArticle.title}}</p>
             <div v-html="compiledMarkdown"></div>
-        </Card>
-      </Col>
-    </Row>
+          </Card>
+        </Col>
+      </Row>
+    </div>
     <template>
       <Back-top></Back-top>
     </template>
   </div>
 </template>
-<style>
+<style scoped>
   .wrap-content{width: 90%;
     margin:10px auto;}
 </style>
@@ -58,6 +62,7 @@
     components:{HeaderItem},
     data(){
       return {
+        typeList: [],
         formArticle:{
           title: '',
           type: '',
@@ -68,7 +73,7 @@
             {required: true, message: '请输入标题', trigger: 'blur'}
           ],
           type: [
-            {required: true, message: '请输入文章类型', trigger: 'blur'}
+            {required: true, message: '请选择文章类型', trigger: 'blur'}
           ],
           content: [
             {required: true, message: '请输入正文', trigger: 'blur'}
@@ -77,7 +82,11 @@
       }
     },
     created() {
-      console.log(CONST_apiUrl);
+      this.$http.get(CONST_apiUrl + "/articlesType")
+        .then((response)=>{
+//          console.log(response.body);
+          this.typeList = response.body;
+      });
     },
     computed: {
       compiledMarkdown: function () {
@@ -94,13 +103,13 @@
               content:this.formArticle.content
             }).then((response)=>{
               if (response.body.state == 1) {
-                this.$Message.success(response.body.info);
+                this.$router.push({path: '/'});
               } else {
                 this.$Message.error(response.body.info);
               }
             });
           }else {
-            this.$Message.error('表单验证失败!');
+            console.log('表单验证失败!');
           }
         });
       },

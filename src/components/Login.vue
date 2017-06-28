@@ -3,8 +3,8 @@
     <HeaderItem willLogin=true></HeaderItem>
     <div class="bg-full" ref="bgFull">
       <Row>
-        <Col class="wrap-form" :xs="20" :sm="8" :md="6" :lg="4">
-        <Tabs value="name1" type="card">
+        <Col class="wrap-form" :xs="18" :sm="8" :md="6" :lg="4">
+        <Tabs value="name1" ref="dasdasdas" type="card">
           <Tab-pane label="登录" name="name1">
             <Form ref="formLogin" :model="formLogin" :rules="rulesLogin">
               <Form-item prop="username">
@@ -16,7 +16,6 @@
               <Form-item>
                 <Button type="primary" size="large" long @click="handleLogin('formLogin')">登录</Button>
               </Form-item>
-
             </Form>
           </Tab-pane>
           <Tab-pane label="注册" name="name2">
@@ -141,13 +140,11 @@
     mounted() {
       if ('' != getCookie('userName') && 'error' != getCookie('userName') && 'undefined' != getCookie('userName')) {
         this.formLogin.username = getCookie('userName');
-//                this.formLogin.password = getCookie('pwd');
-//        console.log("Cookie中的用户名:" + getCookie('userName'))
       } else {
-//        console.log("Cookie中找不到登录信息")
+        console.log("cookie中找不到登录信息")
       }
       //随机切换背景图片
-      var imgUrl = require('../assets/bg-0' + Math.round(Math.random()*3+1) + '.jpg');
+      var imgUrl = require('../assets/bg-0' + Math.round(Math.random()*5+1) + '.jpg');
       this.$refs.bgFull.style.backgroundImage = "url("+ imgUrl +")";
     },
     methods: {
@@ -164,7 +161,6 @@
             ).then((response) => {
               console.log("请求登录接口成功");
               if (response.body.state == 1) {
-                this.$Message.success('登录成功!');
                 setCookie("userName", this.formLogin.username, 7);
                 setCookie("pwd", this.formLogin.password, 7);
                 setCookie("nickname", response.body.nickname, 7);
@@ -197,7 +193,11 @@
               console.log("请求注册接口成功");
               console.log(response.body)
               if (response.body.state == 1) {
-                this.$Message.success('注册成功!');
+                this.$Message.success(response.body.info);
+                this.formLogin.username = this.formRegister.username;
+                this.formLogin.password = this.formRegister.password;
+                this.$refs['formRegister'].resetFields();
+                document.getElementsByClassName("ivu-tabs-tab")[0].click();
               } else {
                 this.$Message.error(response.body.info);
               }

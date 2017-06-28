@@ -7,9 +7,10 @@ import router from './router'
 import 'iview/dist/styles/iview.css'
 
 global.CONST_apiUrl = 'http://sizhijian.com:3000';
-Vue.config.productionTip = false
+// global.CONST_apiUrl = 'http://192.168.1.62:3000';
+Vue.config.productionTip = false;
 
-Vue.use(iView)
+Vue.use(iView);
 
 /* eslint-disable no-new */
 new Vue({
@@ -17,4 +18,4 @@ new Vue({
   router,
   template: '<App/>',
   components: { App }
-})
+});
