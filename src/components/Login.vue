@@ -144,8 +144,13 @@
         console.log("cookie中找不到登录信息")
       }
       //随机切换背景图片
-      var imgUrl = require('../assets/bg-0' + Math.round(Math.random()*5+1) + '.jpg');
+      var imgCode = 2;
+      while(imgCode == getCookie("imgCode")){
+        imgCode = Math.round(Math.random()*5+1);
+      }
+      var imgUrl = require('../assets/bg-0' + imgCode + '.jpg');
       this.$refs.bgFull.style.backgroundImage = "url("+ imgUrl +")";
+      setCookie("imgCode", imgCode);
     },
     methods: {
       handleLogin(name) {
