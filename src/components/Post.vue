@@ -50,6 +50,7 @@
   import marked from 'marked'
   import Vue from 'vue'
   import VueResource from 'vue-resource'
+  import Store from '../vuex/store'
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
   export default{
@@ -88,6 +89,10 @@
           this.typeList = response.body;
       });
     },
+    mounted() {
+        console.log(Store.state.logined)
+      console.log(Store.state.nickName)
+    },
     computed: {
       compiledMarkdown: function () {
         return marked(this.formArticle.content, { sanitize: true })
@@ -97,17 +102,23 @@
       handleSubmit(name){
         this.$refs[name].validate((valid) => {
           if(valid) {
-            this.$http.post(CONST_apiUrl + "/post",{
-              title:this.formArticle.title,
-              type:this.formArticle.type,
-              content:this.formArticle.content
-            }).then((response)=>{
-              if (response.body.state == 1) {
-                this.$router.push({path: '/'});
-              } else {
-                this.$Message.error(response.body.info);
-              }
-            });
+            if (Store.state.logined) {
+              this.$http.post(CONST_apiUrl + "/post",{
+                title:this.formArticle.title,
+                type:this.formArticle.type,
+                author:Store.state.nickName,
+                content:this.formArticle.content
+              }).then((response)=>{
+                if (response.body.state == 1) {
+                  this.$router.push({path: '/'});
+                } else {
+                  this.$Message.error(response.body.info);
+                }
+              });
+            }else {
+              this.$Message.error("登陆后才能发表~")
+            }
+
           }else {
             console.log('表单验证失败!');
           }

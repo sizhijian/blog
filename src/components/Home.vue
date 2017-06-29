@@ -1,11 +1,12 @@
 <template>
   <div>
     <HeaderItem logined=logined></HeaderItem>
-    <Tabs @on-click="handleClick" type="line">
+    <Tabs @on-click="handleClick" type="line" size="small">
       <Tab-pane v-for="(item , index) in compiledMarkdown" :key="index" :label="item.type" ref="tabsItem">
         <div class="container">
           <Card v-for="(subitem , subindex) in item.contain" :key="subindex" :bordered="true" :class="{active : subitem.packUp}">
             <p slot="title" style="text-align: center;font-size: 16px;">{{subitem.title}}</p>
+            <h5 style="text-align: right;color: #2d8cf0;"><span v-if="subitem.author">From：{{subitem.author}}</span></h5>
             <div v-html="subitem.content"></div>
             <!--{{subitem.packUp}}-->
             {{subitem.initHeight}}
@@ -85,7 +86,7 @@
 
         });
         this.directory = response.body.info;
-//        console.log(JSON.stringify(this.directory));
+      //  console.log(JSON.stringify(this.directory));
       });
     },
     mounted(){
