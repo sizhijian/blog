@@ -8,10 +8,10 @@
           <Tab-pane label="登录" name="name1">
             <Form ref="formLogin" :model="formLogin" :rules="rulesLogin">
               <Form-item prop="username">
-                <Input size="large" v-model="formLogin.username" placeholder="请输入用户名"></Input>
+                <Input size="large" v-model="formLogin.username" placeholder="请输入用户名" @on-enter="handleLogin('formLogin')"></Input>
               </Form-item>
               <Form-item prop="password">
-                <Input size="large" type="password" v-model="formLogin.password" placeholder="请输入密码"></Input>
+                <Input size="large" type="password" v-model="formLogin.password" placeholder="请输入密码" ref="afterRegFocusHere" @on-enter="handleLogin('formLogin')"></Input>
               </Form-item>
               <Form-item>
                 <Button type="primary" size="large" long @click="handleLogin('formLogin')">登录</Button>
@@ -21,16 +21,16 @@
           <Tab-pane label="注册" name="name2">
             <Form ref="formRegister" :model="formRegister" :rules="rulesRegister">
               <Form-item prop="username">
-                <Input size="large" v-model="formRegister.username" placeholder="请输入用户名"></Input>
+                <Input size="large" v-model="formRegister.username" placeholder="请输入用户名" @on-enter="handleRegister('formRegister')"></Input>
               </Form-item>
               <Form-item prop="password">
-                <Input size="large" type="password" v-model="formRegister.password" placeholder="请输入密码"></Input>
+                <Input size="large" type="password" v-model="formRegister.password" placeholder="请输入密码" @on-enter="handleRegister('formRegister')"></Input>
               </Form-item>
               <Form-item prop="passCheck">
-                <Input size="large" type="password" v-model="formRegister.passCheck" placeholder="请再次输入密码"></Input>
+                <Input size="large" type="password" v-model="formRegister.passCheck" placeholder="请再次输入密码" @on-enter="handleRegister('formRegister')"></Input>
               </Form-item>
               <Form-item prop="nickname">
-                <Input size="large" v-model="formRegister.nickname" placeholder="请输入昵称"></Input>
+                <Input size="large" v-model="formRegister.nickname" placeholder="请输入昵称" @on-enter="handleRegister('formRegister')"></Input>
               </Form-item>
               <Form-item>
                 <Button type="primary" size="large" long @click="handleRegister('formRegister')">注册</Button>
@@ -175,7 +175,7 @@
               console.log(error)
             });
           } else {
-            this.$Message.error('表单验证失败!');
+//            this.$Message.error('表单验证失败!');
           }
         })
       },
@@ -198,6 +198,7 @@
                 this.formLogin.password = this.formRegister.password;
                 this.$refs['formRegister'].resetFields();
                 document.getElementsByClassName("ivu-tabs-tab")[0].click();
+                this.$refs.afterRegFocusHere.focus();
               } else {
                 this.$Message.error(response.body.info);
               }
@@ -206,7 +207,7 @@
               console.log(error)
             });
           } else {
-            this.$Message.error('表单验证失败!');
+//            this.$Message.error('表单验证失败!');
           }
         })
       }
