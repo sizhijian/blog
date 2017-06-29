@@ -6,7 +6,7 @@
         <h1 class="title">Zhijian</h1>
       </router-link>
       <div class="userinfo" v-if="!willLogin">
-        <a class="publish" @click="handlePublish"><Icon type="edit" size="20" v-if="!isPost"></Icon></a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a class="publish" style="padding-top: 2px" @click="handlePublish"><Icon type="edit" size="20" v-if="!isPost"></Icon></a>&nbsp;&nbsp;&nbsp;&nbsp;
         <a class="avatar" v-if="logined" @click="toggleBtns">
           <Icon size="28" type="ios-person"></Icon>
           <Icon type="arrow-down-b"></Icon>
