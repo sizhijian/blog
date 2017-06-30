@@ -85,8 +85,8 @@
       };
       return {
         formLogin: {
-          username: 'zlqszj',
-          password: 'nini4444'
+          username: '',
+          password: ''
         },
         rulesLogin: {
           username: [
