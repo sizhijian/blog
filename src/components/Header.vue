@@ -13,7 +13,7 @@
         </a>
         <router-link v-else to="/login">登录</router-link>
         <div v-if="showBtn" class="dropdown-menu">
-          <div class="dropdown-item">欢迎你 , {{nickName}}</div>
+          <div class="dropdown-item">欢迎你 , {{nickname}}</div>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item"><Icon type="person"></Icon>&nbsp;&nbsp;个人中心</a>
           <div class="dropdown-divider"></div>
@@ -152,7 +152,7 @@
     data() {
       return {
         logined :Store.state.logined,
-        nickName : Store.state.nickName,
+        nickname : Store.state.nickname,
         showBtn : false
       }
     },
@@ -179,9 +179,9 @@
     mounted() {
       if(''!=getCookie('userName') && 'error'!=getCookie('userName') &&'undefined'!=getCookie('userName') && ''!=getCookie('pwd') && 'error'!=getCookie('pwd') &&'undefined'!=getCookie('pwd')){
         Store.commit('login');
-        Store.commit('getNickName', getCookie('nickname'));
+        Store.commit('getNickname', getCookie('nickname'));
         this.logined = Store.state.logined;
-        this.nickName = Store.state.nickName;
+        this.nickname = Store.state.nickname;
         console.log("cookie user: " + getCookie('userName'))
       }else {
         console.log("现在是未登录状态..")

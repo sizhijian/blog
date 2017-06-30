@@ -9,7 +9,7 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
     state: {
         logined:false,
-        nickName: 'XXX'
+        nickname: 'XXX'
     },
     mutations: {
         login (state) {
@@ -18,8 +18,8 @@ const store = new Vuex.Store({
         logout (state) {
             state.logined = false;
         },
-        getNickName (state , nickName) {
-            state.nickName = nickName
+        getNickname (state , nickname) {
+            state.nickname = nickname
         }
     }
 })

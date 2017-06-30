@@ -91,7 +91,7 @@
     },
     mounted() {
         console.log(Store.state.logined)
-      console.log(Store.state.nickName)
+      console.log(Store.state.nickname)
     },
     computed: {
       compiledMarkdown: function () {
@@ -106,7 +106,7 @@
               this.$http.post(CONST_apiUrl + "/post",{
                 title:this.formArticle.title,
                 type:this.formArticle.type,
-                author:Store.state.nickName,
+                author:Store.state.nickname,
                 content:this.formArticle.content
               }).then((response)=>{
                 if (response.body.state == 1) {

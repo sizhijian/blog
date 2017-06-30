@@ -170,7 +170,8 @@
                 setCookie("pwd", this.formLogin.password, 7);
                 setCookie("nickname", response.body.nickname, 7);
                 Store.commit('login');
-                Store.commit('getNickName', response.body.nickname);
+                Store.commit('getNickname', response.body.nickname);
+//                alert(Store.state.nickname)
                 this.$router.push({path: '/'});
               } else {
                 this.$Message.error(response.body.info);
