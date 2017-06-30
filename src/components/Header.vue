@@ -127,7 +127,7 @@
 
   export default {
     name: 'header',
-    props: ['isPost','isProd','isEntry','willLogin'],
+    props: ['isPost','willLogin'],
     data() {
       return {
         logined :Store.state.logined,
@@ -156,7 +156,7 @@
       }
     },
     mounted() {
-      if(''!=Cookies.get('userName') && 'error'!=Cookies.get('userName') &&'undefined'!=Cookies.get('userName') && ''!=Cookies.get('pwd') && 'error'!=Cookies.get('pwd') &&'undefined'!=Cookies.get('pwd')){
+      if(''!=Cookies.get('userName') && 'error'!=Cookies.get('userName') && undefined !=Cookies.get('userName') && ''!=Cookies.get('pwd') && 'error'!=Cookies.get('pwd') && undefined !=Cookies.get('pwd')){
         Store.commit('login');
         this.logined = Store.state.logined;
         this.nickname = Cookies.get('nickname');

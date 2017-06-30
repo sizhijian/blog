@@ -122,7 +122,7 @@
       }
     },
     mounted() {
-      if ('' != Cookies.get('userName') && 'error' != Cookies.get('userName') && 'undefined' != Cookies.get('userName')) {
+      if ('' != Cookies.get('userName') && 'error' != Cookies.get('userName') && undefined != Cookies.get('userName')) {
         this.formLogin.username = Cookies.get('userName');
       } else {
         console.log("cookie中找不到登录信息")
