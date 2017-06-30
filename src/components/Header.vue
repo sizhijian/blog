@@ -13,11 +13,11 @@
         </a>
         <router-link v-else to="/login">登录</router-link>
         <div v-if="showBtn" class="dropdown-menu">
-          <div class="dropdown-item">欢迎你 , {{nickname}}</div>
+          <div class="dropdown-item">欢迎你 , <span v-if="updatedNickname!=''&&updatedNickname!=null">{{updatedNickname}}</span><span v-else>{{nickname}}</span></div>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item"><Icon type="person"></Icon>&nbsp;&nbsp;个人中心</a>
+            <router-link class="dropdown-item" to="/user"><Icon type="person"></Icon>&nbsp;个人中心</router-link>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" @click="handleLogout"><Icon type="log-out"></Icon>&nbsp;&nbsp;登出</a>
+          <a class="dropdown-item" @click="handleLogout(requireLogin)"><Icon type="log-out"></Icon>登出</a>
         </div>
 
       </div>
@@ -127,21 +127,26 @@
 
   export default {
     name: 'header',
-    props: ['isPost','willLogin'],
+    props: ['isPost','willLogin',"updatedNickname","requireLogin"],
     data() {
       return {
         logined :Store.state.logined,
         nickname : Store.state.nickname,
+//        nickname : Cookies.get("nickname"),
         showBtn : false
       }
     },
     methods: {
-      handleLogout() {
+      handleLogout(e) {
         Cookies.remove('pwd');
         Cookies.remove('nickname');
         Store.commit('logout');
         this.logined = Store.state.logined;
         this.showBtn = false;
+        if(e){
+          this.$router.push({path:"/login"})
+        }
+
 //        this.$router.push({path:'/login'})
       },
       handlePublish() {
@@ -159,7 +164,9 @@
       if(''!=Cookies.get('userName') && 'error'!=Cookies.get('userName') && undefined !=Cookies.get('userName') && ''!=Cookies.get('pwd') && 'error'!=Cookies.get('pwd') && undefined !=Cookies.get('pwd')){
         Store.commit('login');
         this.logined = Store.state.logined;
-        this.nickname = Cookies.get('nickname');
+//        this.nickname = Cookies.get('nickname');
+        Store.commit('getNickname', Cookies.get('nickname'));
+        this.nickname = Store.state.nickname;
         console.log("cookie user: " + Cookies.get('userName'))
       }else {
         console.log("现在是未登录状态..")
