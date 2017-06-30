@@ -56,11 +56,27 @@
   import Vue from 'vue'
   import VueResource from 'vue-resource'
   import md5 from 'md5'
-  import Cookies from 'js-cookie'
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
 
+  //设置用户名到cookie
+  function setCookie (name, value, iDay) {
+    var oDate = new Date();
+    oDate.setDate(oDate.getDate() + iDay); //用来设置过期时间用的，获取当前时间加上传进来的iDay就是过期时间
+    document.cookie = name + '=' + value + ';expires=' + oDate;
+  };
+  //通过name的key获取用户名
+  function getCookie (name) {
+    var arr = document.cookie.split('; '); //多个cookie值是以; 分隔的，用split把cookie分割开并赋值给数组
+    for (var i = 0; i < arr.length; i++) {
+      var arr2 = arr[i].split('=');
+      if (arr2[0] == name) {
+        return arr2[1];
+      }
+    }
+    return ''; //没找到就返回空
+  };
 
   export default {
     name: 'hello',
@@ -85,8 +101,8 @@
       };
       return {
         formLogin: {
-          username: 'zlqszj',
-          password: 'nini4444'
+          username: '',
+          password: ''
         },
         rulesLogin: {
           username: [
@@ -122,19 +138,19 @@
       }
     },
     mounted() {
-      if ('' != Cookies.get('userName') && 'error' != Cookies.get('userName') && 'undefined' != Cookies.get('userName')) {
-        this.formLogin.username = Cookies.get('userName');
+      if ('' != getCookie('userName') && 'error' != getCookie('userName') && 'undefined' != getCookie('userName')) {
+        this.formLogin.username = getCookie('userName');
       } else {
         console.log("cookie中找不到登录信息")
       }
       //随机切换背景图片
       var imgCode = 2;
-      while(imgCode == Cookies.get("imgCode")){
+      while(imgCode == getCookie("imgCode")){
         imgCode = Math.round(Math.random()*5+1);
       }
       var imgUrl = require('../assets/bg-0' + imgCode + '.jpg');
       this.$refs.bgFull.style.backgroundImage = "url("+ imgUrl +")";
-      Cookies.set("imgCode", imgCode);
+      setCookie("imgCode", imgCode);
     },
     methods: {
       handleLogin(name) {
@@ -150,12 +166,12 @@
             ).then((response) => {
               console.log("请求登录接口成功");
               if (response.body.state == 1) {
-                Cookies.set("userName", this.formLogin.username, { expires: 7 });
-                Cookies.set("pwd", this.formLogin.password, { expires: 7 });
-                Cookies.set("nickname", response.body.nickname, { expires: 7 });
+                setCookie("userName", this.formLogin.username, 7);
+                setCookie("pwd", this.formLogin.password, 7);
+                setCookie("nickname", response.body.nickname, 7);
                 Store.commit('login');
-//                Store.commit('getNickname', response.body.nickname);
-                alert(Cookies.get("nickname"))
+                Store.commit('getNickname', response.body.nickname);
+//                alert(Store.state.nickname)
                 this.$router.push({path: '/'});
               } else {
                 this.$Message.error(response.body.info);

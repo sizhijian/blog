@@ -123,7 +123,28 @@
 </style>
 <script>
   import Store from '../vuex/store'
-  import Cookies from 'js-cookie'
+
+  //设置用户名到cookie
+  function setCookie(name, value, iDay){
+    var oDate=new Date();
+    oDate.setDate(oDate.getDate()+iDay); //用来设置过期时间用的，获取当前时间加上传进来的iDay就是过期时间
+    document.cookie=name+'='+value+';expires='+oDate;
+  };
+  //通过name的key获取用户名
+  function getCookie(name){
+    var arr=document.cookie.split('; '); //多个cookie值是以; 分隔的，用split把cookie分割开并赋值给数组
+    for(var i=0;i<arr.length;i++){
+      var arr2=arr[i].split('=');
+      if(arr2[0]==name){
+        return arr2[1];
+      }
+    }
+    return ''; //没找到就返回空
+  };
+  //清除用户名对应cookie
+  function removeCookie(name){
+    setCookie(name, "error", -1); //-1就是告诉系统已经过期，系统就会立刻去删除cookie
+  };
 
   export default {
     name: 'header',
@@ -137,8 +158,8 @@
     },
     methods: {
       handleLogout() {
-        Cookies.remove('pwd');
-        Cookies.remove('nickname');
+        removeCookie('pwd');
+        removeCookie('nickname');
         Store.commit('logout');
         this.logined = Store.state.logined;
         this.showBtn = false;
@@ -156,11 +177,12 @@
       }
     },
     mounted() {
-      if(''!=Cookies.get('userName') && 'error'!=Cookies.get('userName') &&'undefined'!=Cookies.get('userName') && ''!=Cookies.get('pwd') && 'error'!=Cookies.get('pwd') &&'undefined'!=Cookies.get('pwd')){
+      if(''!=getCookie('userName') && 'error'!=getCookie('userName') &&'undefined'!=getCookie('userName') && ''!=getCookie('pwd') && 'error'!=getCookie('pwd') &&'undefined'!=getCookie('pwd')){
         Store.commit('login');
+        Store.commit('getNickname', getCookie('nickname'));
         this.logined = Store.state.logined;
-        this.nickname = Cookies.get('nickname');
-        console.log("cookie user: " + Cookies.get('userName'))
+        this.nickname = Store.state.nickname;
+        console.log("cookie user: " + getCookie('userName'))
       }else {
         console.log("现在是未登录状态..")
       }

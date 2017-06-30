@@ -51,11 +51,8 @@
   import Vue from 'vue'
   import VueResource from 'vue-resource'
   import Store from '../vuex/store'
-  import Cookies from 'js-cookie'
-
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
-
   export default{
     http: {
       root: '/root',
@@ -93,7 +90,8 @@
       });
     },
     mounted() {
-//        console.log(Store.state.logined)
+        console.log(Store.state.logined)
+      console.log(Store.state.nickname)
     },
     computed: {
       compiledMarkdown: function () {
@@ -108,7 +106,7 @@
               this.$http.post(CONST_apiUrl + "/post",{
                 title:this.formArticle.title,
                 type:this.formArticle.type,
-                author:Cookies.get("nickname"),
+                author:Store.state.nickname,
                 content:this.formArticle.content
               }).then((response)=>{
                 if (response.body.state == 1) {
