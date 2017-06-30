@@ -155,7 +155,7 @@
                 Cookies.set("nickname", response.body.nickname, { expires: 7 });
                 Store.commit('login');
 //                Store.commit('getNickname', response.body.nickname);
-                alert(Cookies.get("nickname"))
+//                alert(Cookies.get("nickname"))
                 this.$router.push({path: '/'});
               } else {
                 this.$Message.error(response.body.info);
