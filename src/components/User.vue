@@ -25,11 +25,24 @@
                     <li v-for="(item, index) in works" :key="index" style="margin-top: 10px;padding-bottom:10px;border-bottom: 1px solid #eee;">
                         {{item.title}}
                         <!--<router-link to="'/post?title=' + item.title">-->
-                            <Button style="float: right;" size="small" type="error" icon="trash-a" @click="handleDelete(item._id)">刪除</Button>
+                            <Button style="float: right;" size="small" type="error" icon="trash-a" @click="remove_id = item._id;modal = true;">刪除</Button>
                         <!--</router-link>-->
                     </li>
                 </ul>
             </Card>
+            <Modal v-model="modal" width="360">
+              <p slot="header" style="color:#f60;text-align:center">
+                  <Icon type="information-circled"></Icon>
+                  <span>删除确认</span>
+              </p>
+              <div style="text-align:center">
+                  <p>此文章删除后，将无法恢复。</p>
+                  <p>是否继续删除？</p>
+              </div>
+              <div slot="footer">
+                  <Button type="error" size="large" long :loading="modal_loading" @click="handleRemove">删除</Button>
+              </div>
+          </Modal>
         </div>
         <template>
             <Back-top></Back-top>
@@ -68,7 +81,10 @@
                 modifing: false,
                 nicknameEdit: "",
                 updatedNickname: "",
-                works: []
+                works: [],
+                remove_id : "",
+                modal: false,
+                modal_loading:false
             }
         },
         computed: {},
@@ -134,15 +150,28 @@
                     console.log(error)
                 });
             },
-            handleDelete(id) {
-                console.log(id)
+            handleRemove() {
+                this.modal_loading = true;
                 this.$http.post(
                     CONST_apiUrl + '/remove', {
                         username: Cookies.get("username"),
-                        id: id
+                        id: this.remove_id
                     }
                 ).then((response) => {
-                    console.log(response)
+                    if(response.body.state == 1){
+                      this.modal_loading = false;
+                      this.modal = false;
+                      this.$Message.success(response.body.info);
+                      this.works.forEach((item, index) => {
+                        if(item._id == this.remove_id){
+                          this.works.splice(index,1)
+                        }
+                      })
+                    }else {
+                      this.modal_loading = false;
+                      this.modal = false;
+                      this.$Message.error(response.body.info);
+                    }
                 })
             }
         }
