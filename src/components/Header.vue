@@ -11,7 +11,10 @@
           <Icon size="28" type="ios-person"></Icon>
           <Icon type="arrow-down-b"></Icon>
         </a>
-        <router-link v-else to="/login">登录</router-link>
+        <span v-else>
+          <router-link v-if="isPost" to="/login?returnUrl=post">登录</router-link>
+          <router-link v-else to="/login">登录</router-link>
+        </span>
         <div v-if="showBtn" class="dropdown-menu">
           <div class="dropdown-item">欢迎你 , <span v-if="updatedNickname!=''&&updatedNickname!=null">{{updatedNickname}}</span><span v-else>{{nickname}}</span></div>
           <div class="dropdown-divider"></div>
@@ -144,7 +147,7 @@
         this.logined = Store.state.logined;
         this.showBtn = false;
         if(e){
-          this.$router.push({path:"/login"})
+          this.$router.push({path:"/login?returnUrl=user"})
         }
 
 //        this.$router.push({path:'/login'})

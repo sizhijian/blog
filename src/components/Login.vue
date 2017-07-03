@@ -151,12 +151,17 @@
               console.log("请求登录接口成功");
               if (response.body.state == 1) {
                 Cookies.set("username", this.formLogin.username, { expires: 7 });
-                Cookies.set("pwd", this.formLogin.password, { expires: 7 });
+                Cookies.set("pwd", md5(this.formLogin.password), { expires: 7 });
                 Cookies.set("nickname", response.body.nickname, { expires: 7 });
                 Store.commit('login');
                 Store.commit('getNickname', response.body.nickname);
 //                alert(Cookies.get("nickname"))
-                this.$router.push({path: '/'});
+                var returnUrl = this.$route.query.returnUrl;
+                if(returnUrl){
+                  this.$router.push({path: '/' + returnUrl});
+                }else{
+                  this.$router.push({path: '/'});
+                }
               } else {
                 this.$Message.error(response.body.info);
               }
