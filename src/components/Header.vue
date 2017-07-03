@@ -3,7 +3,7 @@
     <div class="container">
       <router-link to="/">
         <img class="logo" src="./../assets/logo.png">
-        <h1 class="title">Zhijian</h1>
+        <!--<h1 class="title">Zhijian</h1>-->
       </router-link>
       <div class="userinfo" v-if="!willLogin">
         <a class="publish" style="padding-top: 2px" @click="handlePublish"><Icon type="edit" size="20" v-if="!isPost"></Icon></a>&nbsp;&nbsp;&nbsp;&nbsp;
@@ -17,7 +17,7 @@
           <div class="dropdown-divider"></div>
             <router-link class="dropdown-item" to="/user"><Icon type="person"></Icon>&nbsp;个人中心</router-link>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" @click="handleLogout(requireLogin)"><Icon type="log-out"></Icon>登出</a>
+          <a class="dropdown-item" @click="handleLogout(requireLogin)"><Icon type="log-out"></Icon>&nbsp;登出</a>
         </div>
 
       </div>
@@ -153,7 +153,7 @@
         if (this.logined) {
           this.$router.push({path: '/post'});
         }else{
-          this.$Message.warning('请先登录!');
+          this.$Message.warning('请先登录 !');
         }
       },
       toggleBtns() {
@@ -161,13 +161,13 @@
       }
     },
     mounted() {
-      if(''!=Cookies.get('userName') && 'error'!=Cookies.get('userName') && undefined !=Cookies.get('userName') && ''!=Cookies.get('pwd') && 'error'!=Cookies.get('pwd') && undefined !=Cookies.get('pwd')){
+      if(''!=Cookies.get('username') && 'error'!= Cookies.get('username') && undefined != Cookies.get('username') && ''!=Cookies.get('pwd') && 'error'!=Cookies.get('pwd') && undefined !=Cookies.get('pwd')){
         Store.commit('login');
         this.logined = Store.state.logined;
 //        this.nickname = Cookies.get('nickname');
         Store.commit('getNickname', Cookies.get('nickname'));
         this.nickname = Store.state.nickname;
-        console.log("cookie user: " + Cookies.get('userName'))
+        console.log("cookie user: " + Cookies.get('username'))
       }else {
         console.log("现在是未登录状态..")
       }

@@ -63,7 +63,7 @@
     mounted(){
       this.nicknameEdit = Cookies.get("nickname");
       this.nickname = Cookies.get("nickname");
-//      console.log(Cookies.get("userName"))
+//      console.log(Cookies.get("username"))
     },
     components: {HeaderItem},
     methods: {
@@ -82,14 +82,14 @@
           }
         this.$http.post(
           CONST_apiUrl + '/modify',{
-            username: Cookies.get("userName"),
+            username: Cookies.get("username"),
             nickname: this.nicknameEdit
           }
         ).then((response) => {
           if (response.body.state == 1) {
             this.$Message.success(response.body.info);
             Cookies.set("nickname",this.nicknameEdit);
-            console.log("更新后的昵称" + Cookies.get("nickname"));
+//            console.log("更新后的昵称: " + Cookies.get("nickname"));
             this.nickname = Cookies.get("nickname");
             this.updatedNickname = Cookies.get("nickname");
             Store.commit("getNickname",Cookies.get("nickname"))

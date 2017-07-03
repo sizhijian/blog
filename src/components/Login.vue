@@ -122,8 +122,8 @@
       }
     },
     mounted() {
-      if ('' != Cookies.get('userName') && 'error' != Cookies.get('userName') && undefined != Cookies.get('userName')) {
-        this.formLogin.username = Cookies.get('userName');
+      if ('' != Cookies.get('username') && 'error' != Cookies.get('username') && undefined != Cookies.get('username')) {
+        this.formLogin.username = Cookies.get('username');
       } else {
         console.log("cookie中找不到登录信息")
       }
@@ -150,7 +150,7 @@
             ).then((response) => {
               console.log("请求登录接口成功");
               if (response.body.state == 1) {
-                Cookies.set("userName", this.formLogin.username, { expires: 7 });
+                Cookies.set("username", this.formLogin.username, { expires: 7 });
                 Cookies.set("pwd", this.formLogin.password, { expires: 7 });
                 Cookies.set("nickname", response.body.nickname, { expires: 7 });
                 Store.commit('login');

@@ -6,13 +6,13 @@
         <Col :lg="{span:11, offset: 1}"  :md="{span:10, offset: 1}"  :sm="{span:10, offset: 1}" :xs="{span: 22, offset: 1}">
           <br>
           <br>
-          <br>
           <Form ref="formArticle" :model="formArticle" :label-width="70" :rules="rulesArticle">
             <Form-item label="标题" prop="title">
               <Input v-model="formArticle.title" placeholder="请输入标题"></Input>
             </Form-item>
             <Form-item label="类型" prop="type">
-              <Select v-model="formArticle.type">
+              <Input v-if="typeList.length == 0" v-model="formArticle.type" placeholder="请输入类型"></Input>
+              <Select v-else v-model="formArticle.type">
                 <Option v-for="item in typeList" :value="item" :key="item">{{item}}</Option>
               </Select>
             </Form-item>
@@ -65,6 +65,16 @@
     },
     components:{HeaderItem},
     data(){
+      const validateType = (rule, value, callback) => {
+          console.log(value === '')
+        if (value === '' && this.typeList.length == 0) {
+          callback(new Error('请输入类型'));
+        } else if (value === '' && this.typeList.length > 0) {
+          callback(new Error('请选择类型'));
+        } else {
+          callback();
+        }
+      };
       return {
         typeList: [],
         formArticle:{
@@ -77,7 +87,7 @@
             {required: true, message: '请输入标题', trigger: 'blur'}
           ],
           type: [
-            {required: true, message: '请选择文章类型', trigger: 'blur'}
+            {required: true, validator: validateType, trigger: 'blur'}
           ],
           content: [
             {required: true, message: '请输入正文', trigger: 'blur'}
@@ -89,11 +99,10 @@
       this.$http.get(CONST_apiUrl + "/articlesType")
         .then((response)=>{
 //          console.log(response.body);
-          this.typeList = response.body;
+          this.typeList = response.body.info;
       });
     },
     mounted() {
-//        console.log(Store.state.logined)
     },
     computed: {
       compiledMarkdown: function () {
@@ -108,7 +117,7 @@
               this.$http.post(CONST_apiUrl + "/post",{
                 title:this.formArticle.title,
                 type:this.formArticle.type,
-                author:Cookies.get("nickname"),
+                author:Cookies.get("username"),
                 content:this.formArticle.content
               }).then((response)=>{
                 if (response.body.state == 1) {
