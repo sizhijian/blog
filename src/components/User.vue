@@ -7,10 +7,9 @@
         <div>
           昵称：
           <span class="wrap-input">
-
-                        <Input v-if="modifing" v-model="nicknameEdit"></Input>
-                        <span v-else>{{nicknameEdit}}</span>
-                    </span>
+              <Input v-if="modifing" v-model="nicknameEdit"></Input>
+              <span v-else>{{nicknameEdit}}</span>
+          </span>
           <div v-if="modifing" style="padding-top: 10px">
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <Button type="success" icon="android-done" @click="handleSave">保存</Button>&nbsp;
@@ -19,15 +18,15 @@
           <Button v-else type="info" icon="edit" @click="handleModify">修改</Button>
         </div>
       </Card>
-      <Card v-show="this.works.length > 0">
+      <Card v-if="this.works.length > 0">
         <h3 slot="title">我的发文</h3>
         <ul class="works-list">
           <li v-for="(item, index) in works" :key="index">
-            {{item.title}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <!--&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #999;">{{item.created_at}}</span>-->
+            <span>{{item.title}}</span>&nbsp;&nbsp;&nbsp;
+            <!-- <span style="color: #999;">{{item.created_at}}</span> -->
             <!--{{item.operation}}-->
             <Button-group class="btn-icon" shape="circle" style="float: right;">
-              <Button v-if="item.operation" type="ghost" icon="edit"></Button>
+              <Button v-if="item.operation" type="ghost" icon="edit" @click="handleEdit(item._id)"></Button>
               <Button v-if="item.operation" type="ghost" icon="trash-a" @click="remove_id = item._id;modal = true;"></Button>
               <Button v-if="item.operation" type="ghost" icon="close-round" @click="item.operation = false"></Button>
               <Button v-else type="text" icon="navicon-round" @click="handleOperation(index)"></Button>
@@ -124,7 +123,7 @@
       ).then((response) => {
 //                console.log(response.body.info)
         response.body.info.forEach((item) => {
-            item.operation = false;
+            item.operation = true;
         });
         this.works = response.body.info;
       });
@@ -194,6 +193,9 @@
             this.$Message.error(response.body.info);
           }
         })
+      },
+      handleEdit(id) {
+        this.$router.push({path:"/post?id="+id})
       }
     }
   }

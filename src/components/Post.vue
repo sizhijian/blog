@@ -77,6 +77,7 @@
       };
       return {
         typeList: [],
+        editId: 0,
         formArticle:{
           title: '',
           type: '',
@@ -97,12 +98,33 @@
     },
     created() {
       this.$http.get(CONST_apiUrl + "/articlesType")
-        .then((response)=>{
+        .then((response) => {
 //          console.log(response.body);
           this.typeList = response.body.info;
       });
     },
     mounted() {
+      console.log(this.$route.query.id)
+      if (this.$route.query.id) {
+        // console.log(1)
+        this.$http.get(
+          CONST_apiUrl+ "/articles",
+          {
+            params: {
+              id: this.$route.query.id,
+            }
+          }
+        ).then((response) => {
+          if (response.body.state == 1 ) {
+            console.log(response.body.info)
+            let data = response.body.info;
+            this.formArticle.title = data.title;
+            this.formArticle.type = data.type;
+            this.formArticle.content = data.body;
+            this.editId = data._id;
+          }
+        })
+      }
     },
     computed: {
       compiledMarkdown: function () {
@@ -114,18 +136,37 @@
         this.$refs[name].validate((valid) => {
           if(valid) {
             if (Store.state.logined) {
-              this.$http.post(CONST_apiUrl + "/post",{
-                title:this.formArticle.title,
-                type:this.formArticle.type,
-                author:Cookies.get("username"),
-                content:this.formArticle.content
-              }).then((response)=>{
-                if (response.body.state == 1) {
-                  this.$router.push({path: '/'});
-                } else {
-                  this.$Message.error(response.body.info);
-                }
-              });
+              if (this.editId != 0){
+                console.log("edit.....")
+                this.$http.post(CONST_apiUrl + "/post",{
+                  id: this.editId,
+                  title:this.formArticle.title,
+                  type:this.formArticle.type,
+                  author:Cookies.get("username"),
+                  content:this.formArticle.content
+                }).then((response)=>{
+                  if (response.body.state == 1) {
+                    // this.$router.push({path: '/'});
+                  } else {
+                    this.$Message.error(response.body.info);
+                  }
+                });
+              }else{
+                console.log("submit.....")
+                this.$http.post(CONST_apiUrl + "/post",{
+                  title:this.formArticle.title,
+                  type:this.formArticle.type,
+                  author:Cookies.get("username"),
+                  content:this.formArticle.content
+                }).then((response)=>{
+                  if (response.body.state == 1) {
+                    // this.$router.push({path: '/'});
+                  } else {
+                    this.$Message.error(response.body.info);
+                  }
+                });
+              }
+
             }else {
               this.$Message.error("登陆后才能发表~")
             }
