@@ -146,7 +146,7 @@
                   content:this.formArticle.content
                 }).then((response)=>{
                   if (response.body.state == 1) {
-                    // this.$router.push({path: '/'});
+                     this.$router.push({path: '/'});
                   } else {
                     this.$Message.error(response.body.info);
                   }
@@ -160,7 +160,7 @@
                   content:this.formArticle.content
                 }).then((response)=>{
                   if (response.body.state == 1) {
-                    // this.$router.push({path: '/'});
+                     this.$router.push({path: '/'});
                   } else {
                     this.$Message.error(response.body.info);
                   }

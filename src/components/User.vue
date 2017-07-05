@@ -23,7 +23,7 @@
         <ul class="works-list">
           <li v-for="(item, index) in works" :key="index">
             <span>{{item.title}}</span>&nbsp;&nbsp;&nbsp;
-            <!-- <span style="color: #999;">{{item.created_at}}</span> -->
+            <!-- <span style="color: #999;">{{item.updated_at}}</span> -->
             <!--{{item.operation}}-->
             <Button-group class="btn-icon" shape="circle" style="float: right;">
               <Button v-if="item.operation" type="ghost" icon="edit" @click="handleEdit(item._id)"></Button>
@@ -123,7 +123,7 @@
       ).then((response) => {
 //                console.log(response.body.info)
         response.body.info.forEach((item) => {
-            item.operation = true;
+            item.operation = false;
         });
         this.works = response.body.info;
       });

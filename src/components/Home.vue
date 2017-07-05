@@ -40,7 +40,7 @@
                 <h2>{{subitem.title}}&nbsp;&nbsp;<Tag type="border">{{subitem.type}}</Tag></h2>
                 <p style="margin: 8px auto;">
                   <span v-if="subitem.author" style="color: #2d8cf0;">From：{{subitem.author}}</span>&nbsp;&nbsp;&nbsp;
-                  <span v-if="subitem.author" style="color: #8590a6;">{{subitem.created_at}}</span>
+                  <span v-if="subitem.author" style="color: #8590a6;">{{subitem.updated_at}}</span>
                 </p>
                 <h5 style="text-align: left;color: #8590a6;"></h5>
                 <div v-html="subitem.body"></div>
@@ -117,9 +117,9 @@
 //           });
 //         });
         response.body.info.forEach((item)=>{
-//            console.log(item.created_at)
-          item.created_at = moment(item.created_at).tz('Asia/Shanghai').format("MM-DD HH:mm");
-//          console.log(item.created_at)
+//            console.log(item.updated_at)
+          item.updated_at = moment(item.updated_at).tz('Asia/Shanghai').format("MM-DD HH:mm");
+//          console.log(item.updated_at)
             item.packUp = false;
             item.showToggle = false;
         });
