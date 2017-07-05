@@ -6,7 +6,9 @@
         <!--<h1 class="title">Zhijian</h1>-->
       </router-link>
       <div class="userinfo" v-if="!willLogin">
-        <a class="publish" style="padding-top: 2px" @click="handlePublish"><Icon type="edit" size="20" v-if="!isPost"></Icon></a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <a class="publish" style="padding-top: 2px" @click="handlePublish">
+          <Icon type="edit" size="20" v-if="!isPost"></Icon>
+        </a>&nbsp;&nbsp;&nbsp;&nbsp;
         <a class="avatar" v-if="logined" @click="toggleBtns">
           <Icon size="28" type="ios-person"></Icon>
           <Icon type="arrow-down-b"></Icon>
@@ -16,13 +18,17 @@
           <router-link v-else to="/login">登录</router-link>
         </span>
         <div v-if="showBtn" class="dropdown-menu">
-          <div class="dropdown-item">欢迎你 , <span v-if="updatedNickname!=''&&updatedNickname!=null">{{updatedNickname}}</span><span v-else>{{nickname}}</span></div>
+          <div class="dropdown-item">欢迎你 , <span
+            v-if="updatedNickname!=''&&updatedNickname!=null">{{updatedNickname}}</span><span v-else>{{nickname}}</span>
+          </div>
           <div class="dropdown-divider"></div>
-            <router-link class="dropdown-item" to="/user"><Icon type="person"></Icon>&nbsp;个人中心</router-link>
+          <router-link class="dropdown-item" to="/user">
+            <Icon type="person"></Icon>&nbsp;个人中心
+          </router-link>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" @click="handleLogout(requireLogin)"><Icon type="log-out"></Icon>&nbsp;登出</a>
+          <a class="dropdown-item" @click="handleLogout(requireLogin)">
+            <Icon type="log-out"></Icon>&nbsp;登出</a>
         </div>
-
       </div>
     </div>
   </div>
@@ -61,25 +67,30 @@
     position: relative;
     height: 54px;
   }
-  .userinfo a{
+
+  .userinfo a {
     line-height: 54px;
     color: rgba(255, 255, 255, 0.75);
   }
-  .userinfo a:hover{
+
+  .userinfo a:hover {
     color: rgba(255, 255, 255, 1);
   }
-  .publish,.avatar{
+
+  .publish, .avatar {
     height: 54px;
     line-height: 54px;
     display: inline-block;
     vertical-align: top;
   }
-  .avatar .ivu-icon{
+
+  .avatar .ivu-icon {
     vertical-align: middle;
-    height: 54px!important;
+    height: 54px !important;
     line-height: 54px;
     display: inline-block;
   }
+
   .name ul {
     border: 1px solid;
     position: absolute;
@@ -98,6 +109,7 @@
     padding-top: 5px;
     padding-bottom: 5px;
   }
+
   .dropdown-menu .dropdown-item {
     display: block;
     padding: 4px 10px 4px 15px;
@@ -106,11 +118,13 @@
     text-overflow: ellipsis;
     white-space: nowrap;
     line-height: normal;
-    height:auto;
+    height: auto;
   }
-  .dropdown-menu a:hover{
+
+  .dropdown-menu a:hover {
     color: #24292e;
   }
+
   .dropdown-menu li {
     padding: 4px 10px 4px 15px;
     line-height: 40px;
@@ -130,13 +144,23 @@
 
   export default {
     name: 'header',
-    props: ['isPost','willLogin',"updatedNickname","requireLogin"],
+    props: ['isPost', 'willLogin', "updatedNickname", "requireLogin"],
     data() {
       return {
-        logined :Store.state.logined,
-        nickname : Store.state.nickname,
-//        nickname : Cookies.get("nickname"),
-        showBtn : false
+        logined: Store.state.logined,
+        nickname: Store.state.nickname,
+        showBtn: false
+      }
+    },
+    created() {
+      if ('' != Cookies.get('username') && 'error' != Cookies.get('username') && undefined != Cookies.get('username') && '' != Cookies.get('pwd') && 'error' != Cookies.get('pwd') && undefined != Cookies.get('pwd')) {
+        Store.commit('login');
+        this.logined = Store.state.logined;
+        Store.commit('getNickname', Cookies.get('nickname'));
+        this.nickname = Store.state.nickname;
+//        console.log("user: " + Cookies.get('username'))
+      } else {
+        console.log("Not logged in.👶");
       }
     },
     methods: {
@@ -146,8 +170,8 @@
         Store.commit('logout');
         this.logined = Store.state.logined;
         this.showBtn = false;
-        if(e){
-          this.$router.push({path:"/login?returnUrl=user"})
+        if (e) {
+          this.$router.push({path: "/login?returnUrl=user"})
         }
 
 //        this.$router.push({path:'/login'})
@@ -155,24 +179,12 @@
       handlePublish() {
         if (this.logined) {
           this.$router.push({path: '/post'});
-        }else{
+        } else {
           this.$Message.warning('请先登录 !');
         }
       },
       toggleBtns() {
         this.showBtn = !this.showBtn;
-      }
-    },
-    mounted() {
-      if(''!=Cookies.get('username') && 'error'!= Cookies.get('username') && undefined != Cookies.get('username') && ''!=Cookies.get('pwd') && 'error'!=Cookies.get('pwd') && undefined !=Cookies.get('pwd')){
-        Store.commit('login');
-        this.logined = Store.state.logined;
-//        this.nickname = Cookies.get('nickname');
-        Store.commit('getNickname', Cookies.get('nickname'));
-        this.nickname = Store.state.nickname;
-        console.log("cookie user: " + Cookies.get('username'))
-      }else {
-        console.log("现在是未登录状态..")
       }
     }
   }

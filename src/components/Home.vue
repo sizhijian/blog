@@ -32,25 +32,49 @@
           </div>
         </div>
       </div>
-      <div class="tabs-con"  v-if="content.length != 0">
+      <div class="tabs-con" v-if="content.length != 0">
         <div class="tabs-tabpane">
           <Row class="container" type="flex" justify="center" align="top">
             <Col :xs="24" :sm="24">
-              <Card v-for="(subitem , subindex) in compiledMarkdown" :key="subindex" :class="{active : subitem.packUp} " style="margin-left: 10px;margin-right: 10px;">
-                <h2>{{subitem.title}}&nbsp;&nbsp;<Tag type="border">{{subitem.type}}</Tag></h2>
-                <p style="margin: 8px auto;">
-                  <span v-if="subitem.author" style="color: #2d8cf0;">From：{{subitem.author}}</span>&nbsp;&nbsp;&nbsp;
-                  <span v-if="subitem.author" style="color: #8590a6;">{{subitem.updated_at}}</span>
-                </p>
-                <h5 style="text-align: left;color: #8590a6;"></h5>
-                <div v-html="subitem.body"></div>
-                <a v-if="subitem.showToggle" class="arrow" @click="handleToggle(index,subindex)">
-                  <Icon v-if="subitem.packUp" type="ios-arrow-down"></Icon>
-                  <Icon v-else type="ios-arrow-up"></Icon>
-                </a>
-              </Card>
+            <Card v-for="(subitem , subindex) in compiledMarkdown" :key="subindex" :class="{active : subitem.packUp} "
+                  style="margin-left: 10px;margin-right: 10px;">
+              <h2>{{subitem.title}}&nbsp;&nbsp;
+                <Tag type="border">{{subitem.type}}</Tag>
+                <Button-group class="btn-icon" shape="circle" style="float: right;">
+                  <Button v-if="subitem.operation" type="ghost" icon="edit" @click="handleEdit(subitem._id)"></Button>
+                  <Button v-if="subitem.operation" type="ghost" icon="trash-a"
+                          @click="remove_id = subitem._id;modal = true;"></Button>
+                  <Button v-if="subitem.operation" type="ghost" icon="close-round"
+                          @click="subitem.operation = false"></Button>
+                  <Button v-else type="text" icon="navicon-round" @click="handleOperation(subindex)"></Button>
+                </Button-group>
+              </h2>
+              <p style="margin: 8px auto;">
+                <span v-if="subitem.author" style="color: #2d8cf0;">From：{{subitem.author}}</span>&nbsp;&nbsp;&nbsp;
+                <span v-if="subitem.author" style="color: #8590a6;">{{subitem.updated_at}}</span>
+              </p>
+              <h5 style="text-align: left;color: #8590a6;"></h5>
+              <div v-html="subitem.body"></div>
+              <a v-if="subitem.showToggle" class="arrow" @click="handleToggle(index,subindex)">
+                <Icon v-if="subitem.packUp" type="ios-arrow-down"></Icon>
+                <Icon v-else type="ios-arrow-up"></Icon>
+              </a>
+            </Card>
             </Col>
           </Row>
+          <Modal v-model="modal" width="360">
+            <p slot="header" style="color:#f60;text-align:center">
+              <Icon type="information-circled"></Icon>
+              <span>删除确认</span>
+            </p>
+            <div style="text-align:center">
+              <p>此文章删除后，将无法恢复。</p>
+              <p>是否继续删除？</p>
+            </div>
+            <div slot="footer">
+              <Button type="error" size="large" long :loading="modal_loading" @click="handleRemove">删除</Button>
+            </div>
+          </Modal>
         </div>
       </div>
       <h1 v-else style="text-align: center;padding: 100px 0;">
@@ -63,14 +87,47 @@
   </div>
 </template>
 <style>
-  .tabs-bar {border-bottom: 1px solid #dddee1;}
-  .tabs-nav{overflow: hidden;}
-  .tabs-nav .this{color: #2baee9;border-bottom: 2px solid}
-  .tabs-tab{float: left;padding: 8px 16px;font-size: 12px;}
-  .tabs-tabpane{margin-top: 10px;}
-  .ivu-card{margin-bottom: 10px;background: #f6f8fa}
-  .arrow{position: absolute;left:0;bottom: -6px;width: 100%;text-align: center;font-size: 18px;}
-  .active{max-height: 220px;overflow: hidden}
+  .tabs-bar {
+    border-bottom: 1px solid #dddee1;
+  }
+
+  .tabs-nav {
+    overflow: hidden;
+  }
+
+  .tabs-nav .this {
+    color: #2baee9;
+    border-bottom: 2px solid
+  }
+
+  .tabs-tab {
+    float: left;
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .tabs-tabpane {
+    margin-top: 10px;
+  }
+
+  .ivu-card {
+    margin-bottom: 10px;
+    background: #f6f8fa
+  }
+
+  .arrow {
+    position: absolute;
+    left: 0;
+    bottom: -6px;
+    width: 100%;
+    text-align: center;
+    font-size: 18px;
+  }
+
+  .active {
+    max-height: 220px;
+    overflow: hidden
+  }
 </style>
 <script>
   import HeaderItem from './Header'
@@ -78,6 +135,8 @@
   import Vue from 'vue'
   import VueResource from 'vue-resource'
   import moment from 'moment'
+  import Cookies from 'js-cookie'
+  import Store from '../vuex/store'
   require('moment-timezone')
 
   Vue.use(VueResource);
@@ -94,16 +153,14 @@
       return {
         activeIndex: 0,
         content: [],
-        arrow: false
+        arrow: false,
+        modifing: false,
+        nicknameEdit: "",
+        updatedNickname: "",
+        remove_id: "",
+        modal: false,
+        modal_loading: false
       }
-    },
-    computed: {
-       compiledMarkdown: function () {
-         return this.content.filter(function (item, index) {
-           item.body = marked(item.body);
-           return item;
-         })
-       }
     },
     created() {
       this.$http.get(
@@ -116,19 +173,21 @@
 // //            console.log(JSON.stringify(subitem))
 //           });
 //         });
-        response.body.info.forEach((item)=>{
+        response.body.info.forEach((item) => {
 //            console.log(item.updated_at)
           item.updated_at = moment(item.updated_at).tz('Asia/Shanghai').format("MM-DD HH:mm");
 //          console.log(item.updated_at)
-            item.packUp = false;
-            item.showToggle = false;
+          item.packUp = false;
+          item.showToggle = false;
+//          item.operation = false;
         });
         this.content = response.body.info;
 //       console.log(JSON.stringify(this.content));
       });
     },
     mounted(){
-      let _this = this, _height = 220;
+      console.log(Store.state.logined)
+//      let _this = this, _height = 220;
 //       setTimeout(function(){
 //         let elArr = document.getElementsByClassName('tabs-tabpane');
 // //        elArr[0].offsetHeight = 500 + "px";
@@ -144,13 +203,57 @@
 //         }
 //       },500);
     },
+    computed: {
+      compiledMarkdown: function () {
+        return this.content.filter(function (item, index) {
+          item.body = marked(item.body);
+          return item;
+        })
+      }
+    },
     components: {HeaderItem},
     methods: {
       handleSelect(index) {
         this.activeIndex = index;
       },
-      handleToggle(i,si){
+      handleToggle(i, si){
 //        this.content[i].contain[si].packUp = !this.content[i].contain[si].packUp;
+      },
+      handleModify() {
+        this.modifing = !this.modifing;
+        this.nicknameEdit = Cookies.get("nickname");
+      },
+      handleOperation(index) {
+        this.content[index].operation = !this.content[index].operation;
+      },
+      handleRemove() {
+        this.modal_loading = true;
+        console.log(this.remove_id)
+        console.log(Cookies.get("username"))
+        this.$http.post(
+          CONST_apiUrl + '/remove', {
+            username: Cookies.get("username"),
+            id: this.remove_id
+          }
+        ).then((response) => {
+          if (response.body.state == 1) {
+            this.modal_loading = false;
+            this.modal = false;
+            this.$Message.success(response.body.info);
+            this.content.forEach((item, index) => {
+              if (item._id == this.remove_id) {
+                this.content.splice(index, 1)
+              }
+            })
+          } else {
+            this.modal_loading = false;
+            this.modal = false;
+            this.$Message.error(response.body.info);
+          }
+        })
+      },
+      handleEdit(id) {
+        this.$router.push({path: "/post?id=" + id})
       }
     }
   }
