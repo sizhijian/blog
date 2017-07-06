@@ -18,16 +18,19 @@
           <router-link v-else to="/login">登录</router-link>
         </span>
         <div v-if="showBtn" class="dropdown-menu">
-          <div class="dropdown-item">欢迎你 , <span
-            v-if="updatedNickname!=''&&updatedNickname!=null">{{updatedNickname}}</span><span v-else>{{nickname}}</span>
+          <div class="dropdown-item">
+            欢迎你 ,
+            <span
+            v-if="updatedNickname!=''&&updatedNickname!=null">{{updatedNickname}}</span>
+            <span v-else>{{nickname}}</span>
           </div>
           <div class="dropdown-divider"></div>
           <router-link class="dropdown-item" to="/user">
-            <Icon type="person"></Icon>&nbsp;个人中心
+            <Icon type="person"></Icon>&nbsp;&nbsp;个人中心
           </router-link>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" @click="handleLogout(requireLogin)">
-            <Icon type="log-out"></Icon>&nbsp;登出</a>
+          <a class="dropdown-item" @click="handleLogout(requireLogin, requireReload)">
+            <Icon type="log-out"></Icon>&nbsp;&nbsp;登出</a>
         </div>
       </div>
     </div>
@@ -144,7 +147,7 @@
 
   export default {
     name: 'header',
-    props: ['isPost', 'willLogin', "updatedNickname", "requireLogin"],
+    props: ['isPost', 'willLogin', "updatedNickname", "requireLogin", "requireReload"],
     data() {
       return {
         logined: Store.state.logined,
@@ -164,7 +167,7 @@
       }
     },
     methods: {
-      handleLogout(e) {
+      handleLogout(e, reload) {
         Cookies.remove('pwd');
         Cookies.remove('nickname');
         Store.commit('logout');
@@ -172,6 +175,9 @@
         this.showBtn = false;
         if (e) {
           this.$router.push({path: "/login?returnUrl=user"})
+        }
+        if (reload) {
+          this.$emit('refresh', '')
         }
 
 //        this.$router.push({path:'/login'})

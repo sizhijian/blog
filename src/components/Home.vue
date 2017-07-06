@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeaderItem logined=logined></HeaderItem>
+    <HeaderItem logined=logined :requireReload=true @refresh="refresh"></HeaderItem>
     <div class="tabs">
       <!-- <div class="tabs-bar" v-if="compiledMarkdown.length != 0">
         <div class="container">
@@ -12,16 +12,7 @@
       <!-- <div class="tabs-con"  v-if="compiledMarkdown.length != 0">
         <div class="tabs-tabpane" v-for="(item , index) in compiledMarkdown" v-if="index == activeIndex">
           <div class="container">
-            <Card v-for="(subitem , subindex) in item.contain" :key="subindex" :bordered="true" :class="{active : subitem.packUp}">
-              <p slot="title" style="text-align: center;font-size: 16px;">{{subitem.title}}</p>
-              <h5 style="text-align: right;color: #2d8cf0;"><span v-if="subitem.author">From：{{subitem.author}}</span></h5>
-              <h5 style="text-align: right;color: #8590a6;"><span v-if="subitem.author">{{subitem.date}}</span></h5>
-              <div v-html="subitem.content"></div>
-              <a v-if="subitem.showToggle" class="arrow" @click="handleToggle(index,subindex)">
-                <Icon v-if="subitem.packUp" type="ios-arrow-down"></Icon>
-                <Icon v-else type="ios-arrow-up"></Icon>
-              </a>
-            </Card>
+
           </div>
         </div>
       </div> -->
@@ -36,27 +27,28 @@
         <div class="tabs-tabpane">
           <Row class="container" type="flex" justify="center" align="top">
             <Col :xs="24" :sm="24">
-            <Card v-for="(subitem , subindex) in compiledMarkdown" :key="subindex" :class="{active : subitem.packUp} "
+            <Card v-for="(item , index) in compiledMarkdown" :key="index" :class="{active : item.packUp} "
                   style="margin-left: 10px;margin-right: 10px;">
-              <h2>{{subitem.title}}&nbsp;&nbsp;
-                <Tag type="border">{{subitem.type}}</Tag>
-                <Button-group class="btn-icon" shape="circle" style="float: right;">
-                  <Button v-if="subitem.operation" type="ghost" icon="edit" @click="handleEdit(subitem._id)"></Button>
-                  <Button v-if="subitem.operation" type="ghost" icon="trash-a"
-                          @click="remove_id = subitem._id;modal = true;"></Button>
-                  <Button v-if="subitem.operation" type="ghost" icon="close-round"
-                          @click="subitem.operation = false"></Button>
-                  <Button v-else type="text" icon="navicon-round" @click="handleOperation(subindex)"></Button>
+              <h2>{{item.title}}&nbsp;&nbsp;
+                <Tag type="border">{{item.type}}</Tag>
+                <!--{{item.operation}}-->
+                <Button-group v-if="item.isAuthor" class="btn-icon" shape="circle" style="float: right;">
+                  <Button v-if="item.operation" type="ghost" icon="edit" @click="handleEdit(item._id)"></Button>
+                  <Button v-if="item.operation" type="ghost" icon="trash-a"
+                          @click="remove_id = item._id;modal = true;"></Button>
+                  <Button v-if="item.operation" type="ghost" icon="close-round"
+                          @click="item.operation = false"></Button>
+                  <Button v-else type="text" icon="navicon-round" @click="handleOperation(index)"></Button>
                 </Button-group>
               </h2>
               <p style="margin: 8px auto;">
-                <span v-if="subitem.author" style="color: #2d8cf0;">From：{{subitem.author}}</span>&nbsp;&nbsp;&nbsp;
-                <span v-if="subitem.author" style="color: #8590a6;">{{subitem.updated_at}}</span>
+                <span v-if="item.author" style="color: #2d8cf0;">From：{{item.author}}</span>&nbsp;&nbsp;&nbsp;
+                <span v-if="item.author" style="color: #8590a6;">{{item.updated_at}}</span>
               </p>
               <h5 style="text-align: left;color: #8590a6;"></h5>
-              <div v-html="subitem.body"></div>
-              <a v-if="subitem.showToggle" class="arrow" @click="handleToggle(index,subindex)">
-                <Icon v-if="subitem.packUp" type="ios-arrow-down"></Icon>
+              <!--<div v-html="item.body"></div>-->
+              <a v-if="item.showToggle" class="arrow" @click="handleToggle(index,index)">
+                <Icon v-if="item.packUp" type="ios-arrow-down"></Icon>
                 <Icon v-else type="ios-arrow-up"></Icon>
               </a>
             </Card>
@@ -163,45 +155,32 @@
       }
     },
     created() {
+    },
+    mounted(){
+      console.log(Store.state.logined)
+      let username = "";
+      if (Store.state.logined) {
+        username = Cookies.get('username');
+      }
       this.$http.get(
-        CONST_apiUrl + '/articles'
+        CONST_apiUrl + '/articles',{
+            params: {
+                username: username
+            }
+        }
       ).then((response) => {
-//         response.body.info.forEach((item)=>{
-//           item.contain.forEach((subitem)=>{
-//             subitem.packUp = false;
-//             subitem.showToggle = false;
-// //            console.log(JSON.stringify(subitem))
-//           });
-//         });
+        console.log(response.body.info)
         response.body.info.forEach((item) => {
 //            console.log(item.updated_at)
           item.updated_at = moment(item.updated_at).tz('Asia/Shanghai').format("MM-DD HH:mm");
 //          console.log(item.updated_at)
           item.packUp = false;
           item.showToggle = false;
-//          item.operation = false;
+          item.operation = false;
         });
         this.content = response.body.info;
 //       console.log(JSON.stringify(this.content));
       });
-    },
-    mounted(){
-      console.log(Store.state.logined)
-//      let _this = this, _height = 220;
-//       setTimeout(function(){
-//         let elArr = document.getElementsByClassName('tabs-tabpane');
-// //        elArr[0].offsetHeight = 500 + "px";
-//
-//         for(let i=0; i<elArr.length;i++ ) {
-//
-//           elArr[i].firstChild.childNodes.forEach(function (item, index) {
-//             if(item.offsetHeight > _height) {
-//               _this.content[i].contain[index].showToggle = true;
-//               _this.content[i].contain[index].packUp = true;
-//             }
-//           })
-//         }
-//       },500);
     },
     computed: {
       compiledMarkdown: function () {
@@ -213,6 +192,9 @@
     },
     components: {HeaderItem},
     methods: {
+      refresh() {
+          console.log(1111111111111)
+      },
       handleSelect(index) {
         this.activeIndex = index;
       },
@@ -224,7 +206,8 @@
         this.nicknameEdit = Cookies.get("nickname");
       },
       handleOperation(index) {
-        this.content[index].operation = !this.content[index].operation;
+          console.log(index)
+        this.content[index].operation = true;
       },
       handleRemove() {
         this.modal_loading = true;
