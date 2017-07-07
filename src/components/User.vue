@@ -168,6 +168,9 @@
         });
       },
       handleOperation(index) {
+        this.works.forEach((item) => {
+          item.operation = false;
+        });
         this.works[index].operation = !this.works[index].operation;
       },
       handleRemove() {

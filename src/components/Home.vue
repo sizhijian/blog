@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeaderItem logined=logined :requireReload=true @refresh="refresh"></HeaderItem>
+    <HeaderItem logined=logined :reFetchDate=true @fetchData="fetchData"></HeaderItem>
     <div class="tabs">
       <!-- <div class="tabs-bar" v-if="compiledMarkdown.length != 0">
         <div class="container">
@@ -46,7 +46,7 @@
                 <span v-if="item.author" style="color: #8590a6;">{{item.updated_at}}</span>
               </p>
               <h5 style="text-align: left;color: #8590a6;"></h5>
-              <!--<div v-html="item.body"></div>-->
+              <div v-html="item.body"></div>
               <a v-if="item.showToggle" class="arrow" @click="handleToggle(index,index)">
                 <Icon v-if="item.packUp" type="ios-arrow-down"></Icon>
                 <Icon v-else type="ios-arrow-up"></Icon>
@@ -69,9 +69,6 @@
           </Modal>
         </div>
       </div>
-      <h1 v-else style="text-align: center;padding: 100px 0;">
-        空空如也 ~
-      </h1>
     </div>
     <template>
       <Back-top></Back-top>
@@ -146,8 +143,6 @@
         activeIndex: 0,
         content: [],
         arrow: false,
-        modifing: false,
-        nicknameEdit: "",
         updatedNickname: "",
         remove_id: "",
         modal: false,
@@ -157,30 +152,7 @@
     created() {
     },
     mounted(){
-      console.log(Store.state.logined)
-      let username = "";
-      if (Store.state.logined) {
-        username = Cookies.get('username');
-      }
-      this.$http.get(
-        CONST_apiUrl + '/articles',{
-            params: {
-                username: username
-            }
-        }
-      ).then((response) => {
-        console.log(response.body.info)
-        response.body.info.forEach((item) => {
-//            console.log(item.updated_at)
-          item.updated_at = moment(item.updated_at).tz('Asia/Shanghai').format("MM-DD HH:mm");
-//          console.log(item.updated_at)
-          item.packUp = false;
-          item.showToggle = false;
-          item.operation = false;
-        });
-        this.content = response.body.info;
-//       console.log(JSON.stringify(this.content));
-      });
+        this.fetchData()
     },
     computed: {
       compiledMarkdown: function () {
@@ -192,8 +164,30 @@
     },
     components: {HeaderItem},
     methods: {
-      refresh() {
-          console.log(1111111111111)
+      fetchData() {
+        let username = "";
+        if (Store.state.logined) {
+          username = Cookies.get('username');
+        }
+        this.$http.get(
+          CONST_apiUrl + '/articles',{
+            params: {
+              username: username
+            }
+          }
+        ).then((response) => {
+//          console.log(response.body.info)
+          response.body.info.forEach((item) => {
+//            console.log(item.updated_at)
+            item.updated_at = moment(item.updated_at).tz('Asia/Shanghai').format("MM-DD HH:mm");
+//          console.log(item.updated_at)
+            item.packUp = false;
+            item.showToggle = false;
+            item.operation = false;
+          });
+          this.content = response.body.info;
+//       console.log(JSON.stringify(this.content));
+        });
       },
       handleSelect(index) {
         this.activeIndex = index;
@@ -201,12 +195,11 @@
       handleToggle(i, si){
 //        this.content[i].contain[si].packUp = !this.content[i].contain[si].packUp;
       },
-      handleModify() {
-        this.modifing = !this.modifing;
-        this.nicknameEdit = Cookies.get("nickname");
-      },
       handleOperation(index) {
           console.log(index)
+        this.content.forEach((item) => {
+              item.operation = false;
+        });
         this.content[index].operation = true;
       },
       handleRemove() {

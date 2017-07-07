@@ -29,7 +29,7 @@
             <Icon type="person"></Icon>&nbsp;&nbsp;个人中心
           </router-link>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" @click="handleLogout(requireLogin, requireReload)">
+          <a class="dropdown-item" @click="handleLogout(requireLogin, reFetchDate)">
             <Icon type="log-out"></Icon>&nbsp;&nbsp;登出</a>
         </div>
       </div>
@@ -147,7 +147,7 @@
 
   export default {
     name: 'header',
-    props: ['isPost', 'willLogin', "updatedNickname", "requireLogin", "requireReload"],
+    props: ['isPost', 'willLogin', "updatedNickname", "requireLogin", "reFetchDate"],
     data() {
       return {
         logined: Store.state.logined,
@@ -166,8 +166,16 @@
         console.log("Not logged in.👶");
       }
     },
+    mounted() {
+      window.addEventListener('scroll', this.handleScroll);
+      document.addEventListener('click', (e) => {
+        if (!this.$el.contains(e.target)) {
+          this.showBtn = false;
+        }
+      })
+    },
     methods: {
-      handleLogout(e, reload) {
+      handleLogout(e, fetchData) {
         Cookies.remove('pwd');
         Cookies.remove('nickname');
         Store.commit('logout');
@@ -176,8 +184,8 @@
         if (e) {
           this.$router.push({path: "/login?returnUrl=user"})
         }
-        if (reload) {
-          this.$emit('refresh', '')
+        if (fetchData) {
+          this.$emit('fetchData', '')
         }
 
 //        this.$router.push({path:'/login'})
@@ -191,6 +199,9 @@
       },
       toggleBtns() {
         this.showBtn = !this.showBtn;
+      },
+      handleScroll() {
+        this.showBtn = false;
       }
     }
   }
