@@ -1,21 +1,21 @@
 <template>
   <div>
-    <HeaderItem logined=logined :reFetchDate=true @fetchData="fetchData"></HeaderItem>
+    <HeaderItem logined=logined  :reFetchDate=true @fetchData="fetchData"></HeaderItem>
     <div class="tabs">
       <!-- <div class="tabs-bar" v-if="compiledMarkdown.length != 0">
-        <div class="container">
-          <div class="tabs-nav">
-            <a :class="['tabs-tab',{this: activeIndex == index}]"  v-for="(item , index) in compiledMarkdown" @click="handleSelect(index)">{{item.type}}</a>
-          </div>
-        </div>
-      </div> -->
+                <div class="container">
+                  <div class="tabs-nav">
+                    <a :class="['tabs-tab',{this: activeIndex == index}]"  v-for="(item , index) in compiledMarkdown" @click="handleSelect(index)">{{item.type}}</a>
+                  </div>
+                </div>
+              </div> -->
       <!-- <div class="tabs-con"  v-if="compiledMarkdown.length != 0">
-        <div class="tabs-tabpane" v-for="(item , index) in compiledMarkdown" v-if="index == activeIndex">
-          <div class="container">
+                <div class="tabs-tabpane" v-for="(item , index) in compiledMarkdown" v-if="index == activeIndex">
+                  <div class="container">
 
-          </div>
-        </div>
-      </div> -->
+                  </div>
+                </div>
+              </div> -->
       <div class="tabs-bar" v-if="content.length != 0" hidden>
         <div class="container">
           <div class="tabs-nav">
@@ -29,28 +29,55 @@
             <Col :xs="24" :sm="24">
             <Card v-for="(item , index) in compiledMarkdown" :key="index" :class="{active : item.packUp} "
                   style="margin-left: 10px;margin-right: 10px;">
-              <h2>{{item.title}}&nbsp;&nbsp;
-                <Tag type="border">{{item.type}}</Tag>
-                <!--{{item.operation}}-->
-                <Button-group v-if="item.isAuthor" class="btn-icon" shape="circle" style="float: right;">
-                  <Button v-if="item.operation" type="ghost" icon="edit" @click="handleEdit(item._id)"></Button>
+              <h5 v-if="item.author" style="color: #2d8cf0;">
+              <span
+                style="font-size: 16px">👾</span>&nbsp;{{item.author}}&nbsp;&nbsp;&nbsp;&nbsp;<span
+                v-if="item.author"
+                style="color: #8590a6;font-weight: normal;">{{item.updated_at}}</span>
+                <Button-group v-if="item.isAuthor" class="btn-icon" shape="circle"
+                              style="float: right;">
+                  <Button v-if="item.operation" type="ghost" icon="edit"
+                          @click="handleEdit(item._id)"></Button>
                   <Button v-if="item.operation" type="ghost" icon="trash-a"
                           @click="remove_id = item._id;modal = true;"></Button>
                   <Button v-if="item.operation" type="ghost" icon="close-round"
                           @click="item.operation = false"></Button>
-                  <Button v-else type="text" icon="navicon-round" @click="handleOperation(index)"></Button>
+                  <Button v-else type="text" icon="navicon-round"
+                          @click="handleOperation(index)"></Button>
                 </Button-group>
-              </h2>
-              <p style="margin: 8px auto;">
-                <span v-if="item.author" style="color: #2d8cf0;">From：{{item.author}}</span>&nbsp;&nbsp;&nbsp;
-                <span v-if="item.author" style="color: #8590a6;">{{item.updated_at}}</span>
-              </p>
-              <h5 style="text-align: left;color: #8590a6;"></h5>
-              <div v-html="item.body"></div>
+              </h5>
+              <h3>{{item.title}}&nbsp;<span class="tag">{{item.type}}</span></h3>
+              <div v-html="item.body" style="padding: 10px 0"></div>
               <a v-if="item.showToggle" class="arrow" @click="handleToggle(index,index)">
                 <Icon v-if="item.packUp" type="ios-arrow-down"></Icon>
                 <Icon v-else type="ios-arrow-up"></Icon>
               </a>
+              <div class="operations-bar">
+                <a href="javascript:;" hidden>
+                  <Icon type="ios-star-outline" size="20"></Icon>
+                  16</a>
+                <a href="javascript:;">
+                  <Icon type="ios-chatbubble-outline" size="20" style="position: relative;top: 2px"></Icon>
+                  {{item.comments.length}}</a>
+              </div>
+              <div class="comments">
+                <div class="comment-submit">
+                  <Input v-model="commentContent" placeholder="你怎么看 ...">
+                  <Button slot="append" icon="ios-paperplane-outline" @click="handleComment(item._id)"></Button>
+                  </Input>
+                </div>
+                <div class="split-line"></div>
+                <div class="comment-item" v-for="item in item.comments">
+                  <div class="comment-header">
+                    <span style="font-size: 16px">🙃</span> &nbsp;
+                    <b>{{item.reviewer}}</b>
+                    <!--{{item.isAuthor}}-->
+                    <span
+                      style="color: #8590a6;font-weight: normal;float: right;position: relative;left: 25px;">{{item.date}}</span>
+                  </div>
+                  <p>{{item.body}}</p>
+                </div>
+              </div>
             </Card>
             </Col>
           </Row>
@@ -64,59 +91,118 @@
               <p>是否继续删除？</p>
             </div>
             <div slot="footer">
-              <Button type="error" size="large" long :loading="modal_loading" @click="handleRemove">删除</Button>
+              <Button type="error" size="large" long :loading="modal_loading" @click="handleRemove">删除
+              </Button>
             </div>
           </Modal>
         </div>
       </div>
     </div>
-    <template>
-      <Back-top></Back-top>
-    </template>
+    <Back-top></Back-top>
   </div>
 </template>
 <style>
-  .tabs-bar {
-    border-bottom: 1px solid #dddee1;
-  }
+    .tabs-bar {
+        border-bottom: 1px solid #dddee1;
+    }
 
-  .tabs-nav {
-    overflow: hidden;
-  }
+    .tabs-nav {
+        overflow: hidden;
+    }
 
-  .tabs-nav .this {
-    color: #2baee9;
-    border-bottom: 2px solid
-  }
+    .tabs-nav .this {
+        color: #2baee9;
+        border-bottom: 2px solid
+    }
 
-  .tabs-tab {
-    float: left;
-    padding: 8px 16px;
-    font-size: 12px;
-  }
+    .tabs-tab {
+        float: left;
+        padding: 8px 16px;
+        font-size: 12px;
+    }
 
-  .tabs-tabpane {
-    margin-top: 10px;
-  }
+    .tabs-tabpane {
+        margin-top: 10px;
+    }
 
-  .ivu-card {
-    margin-bottom: 10px;
-    background: #f6f8fa
-  }
+    .ivu-card {
+        margin-bottom: 10px;
+    }
 
-  .arrow {
-    position: absolute;
-    left: 0;
-    bottom: -6px;
-    width: 100%;
-    text-align: center;
-    font-size: 18px;
-  }
+    .arrow {
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        width: 100%;
+        text-align: center;
+        font-size: 18px;
+    }
 
-  .active {
-    max-height: 220px;
-    overflow: hidden
-  }
+    .split-line {
+        height: 1px;
+        width: 100%;
+        background: #eee;
+    }
+
+    .tag {
+        border: 1px solid #e9eaec !important;
+        background: #fff;
+        font-size: 12px;
+        padding: 1px 2px;
+        font-weight: normal;
+        height: 20px;
+        line-height: 18px;
+        display: inline-block;
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+
+    .operations-bar a {
+        height: 20px;
+        line-height: 20px;
+        padding: 0 5px;
+        margin-right: 5px;
+    }
+
+    .operations-bar i {
+        vertical-align: baseline;
+        margin-right: 5px;
+    }
+
+    .comments {
+        margin-top: 5px;
+        border: 1px solid #e7eaf2;
+        box-shadow: 0 1px 3px 0 rgba(0, 33, 77, .05);
+        -webkit-border-radius: 3px;
+        -moz-border-radius: 3px;
+        border-radius: 3px;
+    }
+
+    .comment-submit {
+        padding: 10px;
+    }
+    .comment-submit .ivu-input-group-append .ivu-btn{height: 32px;position: relative}
+    .comment-submit .ivu-icon {
+        font-size: 24px;position: absolute;height: 24px;width: 24px;margin: auto;
+      left:0;top: 0;bottom: 0;
+      right:0;
+    }
+
+    .comment-item {
+        padding: 8px 5px 0;
+        padding-left: 40px;
+    }
+
+    .comment-item .comment-header {
+        position: relative;
+        right: 30px;
+    }
+
+    .comment-item p {
+        border-bottom: 1px solid #eee;
+        padding: 5px 0;
+    }
 </style>
 <script>
   import HeaderItem from './Header'
@@ -126,6 +212,7 @@
   import moment from 'moment'
   import Cookies from 'js-cookie'
   import Store from '../vuex/store'
+  import Button from "../../node_modules/iview/src/components/button/button";
   require('moment-timezone')
 
   Vue.use(VueResource);
@@ -143,16 +230,34 @@
         activeIndex: 0,
         content: [],
         arrow: false,
-        updatedNickname: "",
-        remove_id: "",
+        updatedNickname: '',
+        remove_id: '',
         modal: false,
-        modal_loading: false
+        modal_loading: false,
+        commentContent: '',
+        comments: [
+          {
+            reviewer: "续敏",
+            body: "我想说,这篇文章写得很烂~~",
+            date: "6分钟前"
+          },
+          {
+            reviewer: "阿乐琴",
+            body: "我想说,续敏说得对",
+            date: "4分钟前"
+          },
+          {
+            reviewer: "管理员",
+            body: "我靠",
+            date: "刚刚"
+          },
+        ]
       }
     },
     created() {
     },
     mounted(){
-        this.fetchData()
+      this.fetchData()
     },
     computed: {
       compiledMarkdown: function () {
@@ -162,7 +267,9 @@
         })
       }
     },
-    components: {HeaderItem},
+    components: {
+      HeaderItem
+    },
     methods: {
       fetchData() {
         let username = "";
@@ -170,7 +277,7 @@
           username = Cookies.get('username');
         }
         this.$http.get(
-          CONST_apiUrl + '/articles',{
+          CONST_apiUrl + '/articles', {
             params: {
               username: username
             }
@@ -184,9 +291,14 @@
             item.packUp = false;
             item.showToggle = false;
             item.operation = false;
+            if(item.comments){
+              item.comments.forEach((item) => {
+                item.date = moment(item.date).tz('Asia/Shanghai').format("HH:mm");
+              })
+            }
           });
           this.content = response.body.info;
-//       console.log(JSON.stringify(this.content));
+       console.log(JSON.stringify(this.content));
         });
       },
       handleSelect(index) {
@@ -196,9 +308,9 @@
 //        this.content[i].contain[si].packUp = !this.content[i].contain[si].packUp;
       },
       handleOperation(index) {
-          console.log(index)
+        console.log(index)
         this.content.forEach((item) => {
-              item.operation = false;
+          item.operation = false;
         });
         this.content[index].operation = true;
       },
@@ -230,6 +342,31 @@
       },
       handleEdit(id) {
         this.$router.push({path: "/post?id=" + id})
+      },
+      handleComment(id) {
+        if (Store.state.logined) {
+          if (this.commentContent.length == 0) {
+            this.$Message.error("评论不能为空 ~")
+          } else {
+            this.$http.post(
+              CONST_apiUrl + "/comment",{
+                username: Cookies.get("username"),
+                id: id,
+                body: this.commentContent
+              }
+            ).then((response) => {
+              if (response.body.state == 1) {
+                this.$Message.success(response.body.info);
+                this.fetchData();
+                this.commentContent = "";
+              } else {
+                this.$Message.error(response.body.info);
+              }
+            })
+          }
+        } else {
+          this.$Message.error("请先登录 ~")
+        }
       }
     }
   }
