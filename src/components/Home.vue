@@ -294,7 +294,11 @@
             item.commentContent = "";
             if(item.comments){
               item.comments.forEach((item) => {
-                item.date = moment(item.date).tz('Asia/Shanghai').format("HH:mm");
+                moment.locale('zh-cn')
+//                  console.log(moment.locale())
+                item.date = moment(item.date).tz('Asia/Shanghai')
+//                  .format("MM-DD HH:mm");
+                  .startOf('second').fromNow();
               })
             }
           });

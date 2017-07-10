@@ -3,7 +3,11 @@
     <HeaderItem logined=logined       :updatedNickname=updatedNickname :requireLogin=true></HeaderItem>
     <div class="container" style="padding: 10px">
       <Card>
-        <h2 slot="title">{{nickname}}</h2>
+        <input class="" name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="handleImgUpload"/>
+        <img v-if="avatorUrl" :src="avatorUrl"/>
+          <h2 slot="title">
+          {{nickname}}
+        </h2>
         <div>
           昵称：
           <span class="wrap-input">
@@ -72,9 +76,6 @@
     left: 0;
     top: 0!important;}
 </style>
-<style>
-
-</style>
 <script>
   import HeaderItem from './Header'
   import Vue from 'vue'
@@ -101,7 +102,10 @@
         works: [],
         remove_id: "",
         modal: false,
-        modal_loading: false
+        modal_loading: false,
+        avatorUrl: "",
+
+        actionUrl: CONST_apiUrl + '/upload'
       }
     },
     computed: {},
@@ -127,11 +131,25 @@
         });
         this.works = response.body.info;
       });
+      this.fetchAvatorData();
     },
     components: {
       HeaderItem
     },
     methods: {
+      fetchAvatorData() {
+        console.log("here....")
+        this.$http.get(
+          CONST_apiUrl + '/login',
+          {
+            params: {
+              username: Cookies.get("username"),
+            }
+          }
+        ).then((response) => {
+             this.avatorUrl = response.body.info
+        });
+      },
       handleModify() {
         this.modifing = !this.modifing;
         this.nicknameEdit = Cookies.get("nickname");
@@ -199,6 +217,22 @@
       },
       handleEdit(id) {
         this.$router.push({path:"/post?id="+id})
+      },
+      handleImgUpload(e) {
+        let file = e.target.files[0];
+        let param = new FormData(); //创建form对象
+        param.append('file',file,file.name);//通过append向form对象添加数据
+        param.append('username',Cookies.get('username'));//添加form表单中其他数据
+        //console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
+        this.$http.post(CONST_apiUrl+'/upload',param)
+          .then(response=>{
+            if (response.body.state == 1) {
+              this.$Message.success(response.body.info);
+              this.fetchAvatorData();
+            } else {
+              this.$Message.error(response.body.info);
+            }
+          })
       }
     }
   }
