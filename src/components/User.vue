@@ -3,9 +3,12 @@
     <HeaderItem logined=logined       :updatedNickname=updatedNickname :requireLogin=true></HeaderItem>
     <div class="container" style="padding: 10px">
       <Card>
-        <input class="" name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="handleImgUpload"/>
-        <img v-if="avatorUrl" :src="avatorUrl"/>
           <h2 slot="title">
+            <div class="wrap-upload">
+                <img v-if="avatarUrl" :src="avatarUrl"/>
+                <Icon v-else class="icon" type="camera" size="20"></Icon>
+                <input name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="handleImgUpload"/>
+            </div>
           {{nickname}}
         </h2>
         <div>
@@ -52,12 +55,14 @@
         </div>
       </Modal>
     </div>
-    <template>
-      <Back-top></Back-top>
-    </template>
+    <Back-top></Back-top>
   </div>
 </template>
 <style>
+  .wrap-upload{display: inline-block;position: relative;vertical-align: bottom;width: 58px;height:58px;line-height: 58px;overflow:hidden;border: 1px solid #e9eaec;}
+  .wrap-upload .icon{width: 20px;height: 20px;text-align: center;position: absolute;top: 0;left: 0;right: 0;bottom: 0;margin: auto;}
+  .wrap-upload img{height: 100%;width: 100%;}
+  .wrap-upload [type="file"]{position: absolute;z-index: 2;top: 0;left: 0;width: 100%;height: 100%;opacity: 0;}
   .wrap-input {
     display: inline-block;
     width: 122px;
@@ -103,7 +108,7 @@
         remove_id: "",
         modal: false,
         modal_loading: false,
-        avatorUrl: "",
+        avatarUrl: "",
 
         actionUrl: CONST_apiUrl + '/upload'
       }
@@ -147,7 +152,8 @@
             }
           }
         ).then((response) => {
-             this.avatorUrl = response.body.info
+          console.log(response)
+             this.avatarUrl = response.body.info
         });
       },
       handleModify() {

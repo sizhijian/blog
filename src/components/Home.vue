@@ -30,8 +30,11 @@
             <Card v-for="(item , index) in compiledMarkdown" :key="index" :class="{active : item.packUp} "
                   style="margin-left: 10px;margin-right: 10px;">
               <h5 v-if="item.author" style="color: #2d8cf0;">
-              <span
-                style="font-size: 16px">👾</span>&nbsp;{{item.author}}&nbsp;&nbsp;&nbsp;&nbsp;<span
+              <div class="wrap-avator">
+                <img v-if="item.avatarUrl" :src="item.avatarUrl" alt="">
+                <img v-else src="http://sizhijian.com:3000/files/avatar.png" alt="">
+              </div>
+              {{item.author}}&nbsp;&nbsp;&nbsp;&nbsp;<span
                 v-if="item.author"
                 style="color: #8590a6;font-weight: normal;">{{item.updated_at}}</span>
                 <Button-group v-if="item.isAuthor" class="btn-icon" shape="circle"
@@ -143,7 +146,8 @@
         width: 100%;
         background: #eee;
     }
-
+    .wrap-avator{width: 10%;display: inline-block;font-size: 0;}
+    .wrap-avator img {width: 100%;}
     .tag {
         border: 1px solid #e9eaec !important;
         background: #fff;
@@ -303,7 +307,7 @@
             }
           });
           this.content = response.body.info;
-//       console.log(JSON.stringify(this.content));
+      // console.log(JSON.stringify(this.content));
         });
       },
       handleSelect(index) {
