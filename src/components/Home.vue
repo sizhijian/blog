@@ -62,8 +62,8 @@
               </div>
               <div class="comments">
                 <div class="comment-submit">
-                  <Input v-model="commentContent" placeholder="你怎么看 ...">
-                  <Button slot="append" icon="ios-paperplane-outline" @click="handleComment(item._id)"></Button>
+                  <Input v-model="item.commentContent" placeholder="你怎么看 ...">
+                  <Button slot="append" icon="ios-paperplane-outline" @click="handleComment(item._id, index)"></Button>
                   </Input>
                 </div>
                 <div class="split-line"></div>
@@ -234,7 +234,7 @@
         remove_id: '',
         modal: false,
         modal_loading: false,
-        commentContent: '',
+//        commentContent: '',
         comments: [
           {
             reviewer: "续敏",
@@ -291,6 +291,7 @@
             item.packUp = false;
             item.showToggle = false;
             item.operation = false;
+            item.commentContent = "";
             if(item.comments){
               item.comments.forEach((item) => {
                 item.date = moment(item.date).tz('Asia/Shanghai').format("HH:mm");
@@ -298,7 +299,7 @@
             }
           });
           this.content = response.body.info;
-       console.log(JSON.stringify(this.content));
+//       console.log(JSON.stringify(this.content));
         });
       },
       handleSelect(index) {
@@ -343,22 +344,25 @@
       handleEdit(id) {
         this.$router.push({path: "/post?id=" + id})
       },
-      handleComment(id) {
+      handleComment(id, index) {
+//          console.log(typeof this.compiledMarkdown[index].commentContent);
         if (Store.state.logined) {
-          if (this.commentContent.length == 0) {
+          if (this.compiledMarkdown[index].commentContent.length == 0) {
             this.$Message.error("评论不能为空 ~")
           } else {
             this.$http.post(
               CONST_apiUrl + "/comment",{
                 username: Cookies.get("username"),
                 id: id,
-                body: this.commentContent
+                body: this.compiledMarkdown[index].commentContent
               }
             ).then((response) => {
               if (response.body.state == 1) {
                 this.$Message.success(response.body.info);
+//                console.log(typeof this.compiledMarkdown[index].commentContent)
+                this.compiledMarkdown[index].commentContent = "";
                 this.fetchData();
-                this.commentContent = "";
+
               } else {
                 this.$Message.error(response.body.info);
               }
