@@ -6,9 +6,12 @@
         <!--<h1 class="title">Zhijian</h1>-->
       </router-link>
       <div class="userinfo" v-if="!willLogin">
-        <a class="publish" style="padding-top: 2px" @click="handlePublish">
-          <Icon type="edit" size="20" v-if="!isPost"></Icon>
-        </a>&nbsp;&nbsp;&nbsp;&nbsp;
+        <router-link to="/" v-if="!home">
+          <Icon type="android-list" size="25" style="position: relative;top: 4px;"></Icon>&nbsp;&nbsp;&nbsp;&nbsp;
+        </router-link>
+        <a @click="handlePublish" v-if="!isPost">
+          <Icon type="edit" size="20" style="position: relative;top: 2px;"></Icon>&nbsp;&nbsp;&nbsp;&nbsp;
+        </a>
         <a class="avatar" v-if="logined" @click="toggleBtns">
           <Icon size="28" type="ios-person"></Icon>
           <Icon type="arrow-down-b"></Icon>
@@ -79,16 +82,8 @@
   .userinfo a:hover {
     color: rgba(255, 255, 255, 1);
   }
-
-  .publish, .avatar {
-    height: 54px;
-    line-height: 54px;
-    display: inline-block;
-    vertical-align: top;
-  }
-
   .avatar .ivu-icon {
-    vertical-align: middle;
+    vertical-align: top;
     height: 54px !important;
     line-height: 54px;
     display: inline-block;
@@ -147,7 +142,7 @@
 
   export default {
     name: 'header',
-    props: ['isPost', 'willLogin', "updatedNickname", "requireLogin", "reFetchDate"],
+    props: ['home', 'isPost', 'willLogin', "updatedNickname", "requireLogin", "reFetchDate"],
     data() {
       return {
         logined: Store.state.logined,

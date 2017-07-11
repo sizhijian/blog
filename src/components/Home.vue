@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeaderItem logined=logined  :reFetchDate=true @fetchData="fetchData"></HeaderItem>
+    <HeaderItem logined="logined" :reFetchDate="true" @fetchData="fetchData" :home="true"></HeaderItem>
     <div class="tabs">
       <!-- <div class="tabs-bar" v-if="compiledMarkdown.length != 0">
                 <div class="container">
@@ -29,14 +29,13 @@
             <Col :xs="24" :sm="24">
             <Card v-for="(item , index) in compiledMarkdown" :key="index" :class="{active : item.packUp} "
                   style="margin-left: 10px;margin-right: 10px;">
-              <h5 v-if="item.author" style="color: #2d8cf0;">
-              <div class="wrap-avator">
-                <img v-if="item.avatarUrl" :src="item.avatarUrl" alt="">
-                <img v-else src="http://sizhijian.com:3000/files/avatar.png" alt="">
-              </div>
-              {{item.author}}&nbsp;&nbsp;&nbsp;&nbsp;<span
-                v-if="item.author"
-                style="color: #8590a6;font-weight: normal;">{{item.updated_at}}</span>
+              <div v-if="item.author" class="wrap-usrinfo">
+                <div class="wrap-avatar" @click="handleShowFull">
+                  <img v-if="item.avatarUrl" :src="item.avatarUrl" alt="">
+                  <img v-else src="http://sizhijian.com:3000/files/avatar.png" alt="">
+                </div>
+                <b v-if="item.author">{{item.author}}</b>
+                <span class="date">{{item.updated_at}}</span>
                 <Button-group v-if="item.isAuthor" class="btn-icon" shape="circle"
                               style="float: right;">
                   <Button v-if="item.operation" type="ghost" icon="edit"
@@ -48,7 +47,7 @@
                   <Button v-else type="text" icon="navicon-round"
                           @click="handleOperation(index)"></Button>
                 </Button-group>
-              </h5>
+              </div>
               <h3>{{item.title}}&nbsp;<span class="tag">{{item.type}}</span></h3>
               <div v-html="item.body" style="padding: 10px 0"></div>
               <a v-if="item.showToggle" class="arrow" @click="handleToggle(index,index)">
@@ -59,20 +58,27 @@
                 <a href="javascript:;" hidden>
                   <Icon type="ios-star-outline" size="20"></Icon>
                   16</a>
-                <a href="javascript:;">
+                <a href="javascript:;" @click="handleToggleComment( index )">
                   <Icon type="ios-chatbubble-outline" size="20" style="position: relative;top: 2px"></Icon>
-                  {{item.comments.length}}</a>
+                  <span v-if="item.packUpComment">收起</span>
+                  <span v-else>
+                    <span v-if="item.comments.length != 0">{{item.comments.length}}</span>
+                  </span>
+                </a>
               </div>
-              <div class="comments">
+              <div class="comments" v-if="item.packUpComment">
                 <div class="comment-submit">
-                  <Input v-model="item.commentContent" placeholder="你怎么看 ...">
+                  <Input v-model="item.commentContent" placeholder="你怎么看 ..." @on-enter="handleComment(item._id, index)">
                   <Button slot="append" icon="ios-paperplane-outline" @click="handleComment(item._id, index)"></Button>
                   </Input>
                 </div>
                 <div class="split-line"></div>
                 <div class="comment-item" v-for="item in item.comments">
                   <div class="comment-header">
-                    <span style="font-size: 16px">🙃</span> &nbsp;
+                    <div class="wrap-avatar" @click="handleShowFull">
+                      <img v-if="item.avatarUrl" :src="item.avatarUrl" alt="">
+                      <img v-else src="http://sizhijian.com:3000/files/avatar.png" alt="">
+                    </div>
                     <b>{{item.reviewer}}</b>
                     <!--{{item.isAuthor}}-->
                     <span
@@ -84,6 +90,10 @@
             </Card>
             </Col>
           </Row>
+          <Modal class="showFullImg" :closable="false" cancel-text="" v-model="showFullVisible" class-name="vertical-center-modal">
+              <img :src="showFullUrl" style="width: 100%">
+              <div slot="footer"></div>
+          </Modal>
           <Modal v-model="modal" width="360">
             <p slot="header" style="color:#f60;text-align:center">
               <Icon type="information-circled"></Icon>
@@ -146,8 +156,13 @@
         width: 100%;
         background: #eee;
     }
-    .wrap-avator{width: 10%;display: inline-block;font-size: 0;}
-    .wrap-avator img {width: 100%;}
+    .wrap-usrinfo {color: #2d8cf0;margin-bottom: 3px;}
+    .wrap-usrinfo .date {color: #8590a6;}
+    .wrap-avatar {width: 10%;display: inline-block;font-size: 0;max-width: 28px;max-height: 28px;border-radius: 3px;overflow: hidden;vertical-align: middle;margin-right: 5px;cursor: pointer;}
+    .wrap-avatar img {width: 100%;}
+    .showFullImg .ivu-modal-footer {display: none;}
+    .vertical-center-modal{display: flex;align-items: center;justify-content: center;}
+   .vertical-center-modal .ivu-modal{top: 0;}
     .tag {
         border: 1px solid #e9eaec !important;
         background: #fff;
@@ -169,10 +184,7 @@
         margin-right: 5px;
     }
 
-    .operations-bar i {
-        vertical-align: baseline;
-        margin-right: 5px;
-    }
+    .operations-bar i {vertical-align: baseline;margin-right: 2px;}
 
     .comments {
         margin-top: 5px;
@@ -238,24 +250,8 @@
         remove_id: '',
         modal: false,
         modal_loading: false,
-//        commentContent: '',
-        comments: [
-          {
-            reviewer: "续敏",
-            body: "我想说,这篇文章写得很烂~~",
-            date: "6分钟前"
-          },
-          {
-            reviewer: "阿乐琴",
-            body: "我想说,续敏说得对",
-            date: "4分钟前"
-          },
-          {
-            reviewer: "管理员",
-            body: "我靠",
-            date: "刚刚"
-          },
-        ]
+        showFullVisible: false,
+        showFullUrl: ""
       }
     },
     created() {
@@ -275,7 +271,7 @@
       HeaderItem
     },
     methods: {
-      fetchData() {
+      fetchData(i) {
         let username = "";
         if (Store.state.logined) {
           username = Cookies.get('username');
@@ -288,11 +284,14 @@
           }
         ).then((response) => {
 //          console.log(response.body.info)
-          response.body.info.forEach((item) => {
+          response.body.info.forEach((item, index) => {
 //            console.log(item.updated_at)
             item.updated_at = moment(item.updated_at).tz('Asia/Shanghai').format("MM-DD HH:mm");
 //          console.log(item.updated_at)
-            item.packUp = false;
+            item.packUpComment = false;
+            if(index == i){
+              item.packUpComment = true;
+            }
             item.showToggle = false;
             item.operation = false;
             item.commentContent = "";
@@ -317,7 +316,6 @@
 //        this.content[i].contain[si].packUp = !this.content[i].contain[si].packUp;
       },
       handleOperation(index) {
-        console.log(index)
         this.content.forEach((item) => {
           item.operation = false;
         });
@@ -349,10 +347,10 @@
           }
         })
       },
-      handleEdit(id) {
+      handleEdit (id) {
         this.$router.push({path: "/post?id=" + id})
       },
-      handleComment(id, index) {
+      handleComment (id, index) {
 //          console.log(typeof this.compiledMarkdown[index].commentContent);
         if (Store.state.logined) {
           if (this.compiledMarkdown[index].commentContent.length == 0) {
@@ -369,8 +367,7 @@
                 this.$Message.success(response.body.info);
 //                console.log(typeof this.compiledMarkdown[index].commentContent)
                 this.compiledMarkdown[index].commentContent = "";
-                this.fetchData();
-
+                this.fetchData(index);
               } else {
                 this.$Message.error(response.body.info);
               }
@@ -379,6 +376,13 @@
         } else {
           this.$Message.error("请先登录 ~")
         }
+      },
+      handleShowFull (event) {
+        this.showFullVisible = true
+        this.showFullUrl = event.target.attributes.src.value
+      },
+      handleToggleComment (index) {
+        this.compiledMarkdown[index].packUpComment = !this.compiledMarkdown[index].packUpComment;
       }
     }
   }
