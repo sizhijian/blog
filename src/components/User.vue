@@ -1,9 +1,10 @@
 <template>
   <div>
-    <HeaderItem logined=logined       :updatedNickname=updatedNickname :requireLogin=true></HeaderItem>
+    <HeaderItem logined="logined" :updatedNickname="updatedNickname" :requireLogin="true">
+    </HeaderItem>
     <div class="container" style="padding: 10px">
       <Card>
-          <h2 slot="title">
+          <h2 style="margin-bottom: 5px;">
             <div class="wrap-upload">
                 <img v-if="avatarUrl" :src="avatarUrl"/>
                 <Icon v-else class="icon" type="camera" size="20"></Icon>
@@ -29,8 +30,8 @@
         <h3 slot="title">我的发文</h3>
         <ul class="works-list">
           <li v-for="(item, index) in works" :key="index">
-            <span>{{item.title}}</span>&nbsp;&nbsp;&nbsp;
-            <!-- <span style="color: #999;">{{item.updated_at}}</span> -->
+            <span>{{item.title}}</span>&nbsp;&nbsp;
+            <span style="color: #999;">{{item.updated_at}}</span>
             <!--{{item.operation}}-->
             <Button-group class="btn-icon" shape="circle" style="float: right;">
               <Button v-if="item.operation" type="ghost" icon="edit" @click="handleEdit(item._id)"></Button>
@@ -59,10 +60,10 @@
   </div>
 </template>
 <style>
-  .wrap-upload{display: inline-block;position: relative;vertical-align: bottom;width: 58px;height:58px;line-height: 58px;overflow:hidden;border: 1px solid #e9eaec;}
-  .wrap-upload .icon{width: 20px;height: 20px;text-align: center;position: absolute;top: 0;left: 0;right: 0;bottom: 0;margin: auto;}
-  .wrap-upload img{height: 100%;width: 100%;}
-  .wrap-upload [type="file"]{position: absolute;z-index: 2;top: 0;left: 0;width: 100%;height: 100%;opacity: 0;}
+  .wrap-upload {display: inline-block;position: relative;vertical-align: bottom;width: 58px;height:58px;line-height: 58px;overflow:hidden;border: 1px solid #e9eaec;}
+  .wrap-upload .icon {width: 20px;height: 20px;text-align: center;position: absolute;top: 0;left: 0;right: 0;bottom: 0;margin: auto;}
+  .wrap-upload img {height: 100%;width: 100%;}
+  .wrap-upload [type="file"] {position: absolute;z-index: 2;top: 0;left: 0;width: 100%;height: 100%;opacity: 0;font-size: 0;cursor: pointer;}
   .wrap-input {
     display: inline-block;
     width: 122px;
@@ -72,7 +73,7 @@
   .ivu-card {
     margin-bottom: 10px;
   }
-  .works-list li{margin-top: 10px;padding-bottom:10px;border-bottom: 1px solid #eee;overflow: hidden;    line-height: 32px;}
+  .works-list li{margin-top: 10px;padding-bottom:10px;border-bottom: 1px solid #eee;overflow: hidden;line-height: 32px;}
   .btn-icon{height: 32px;line-height: 32px;position: relative;}
   .btn-icon .ivu-btn{
     height: 32px;color: #999;}
@@ -87,6 +88,8 @@
   import Store from '../vuex/store'
   import VueResource from 'vue-resource'
   import Cookies from 'js-cookie'
+  import moment from 'moment'
+  require('moment-timezone')
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -132,18 +135,21 @@
       ).then((response) => {
 //                console.log(response.body.info)
         response.body.info.forEach((item) => {
-            item.operation = false;
+          item.operation = false;
+          moment.locale('zh-cn')
+          item.updated_at = moment(item.updated_at).tz('Asia/Shanghai')
+            .startOf('second').fromNow();
         });
         this.works = response.body.info;
+        console.log(this.works);
       });
-      this.fetchAvatorData();
+      this.fetchAvatarData();
     },
     components: {
       HeaderItem
     },
     methods: {
-      fetchAvatorData() {
-        console.log("here....")
+      fetchAvatarData() {
         this.$http.get(
           CONST_apiUrl + '/login',
           {
@@ -152,7 +158,6 @@
             }
           }
         ).then((response) => {
-          console.log(response)
              this.avatarUrl = response.body.info
         });
       },
@@ -234,7 +239,7 @@
           .then(response=>{
             if (response.body.state == 1) {
               this.$Message.success(response.body.info);
-              this.fetchAvatorData();
+              this.fetchAvatarData();
             } else {
               this.$Message.error(response.body.info);
             }
