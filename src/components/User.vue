@@ -3,7 +3,7 @@
     <HeaderItem logined="logined" :updatedNickname="updatedNickname" :requireLogin="true">
     </HeaderItem>
     <div class="container" style="padding: 10px">
-      <Card>
+      <!-- <Card> -->
           <h2 style="margin-bottom: 5px;">
             <div class="wrap-upload">
                 <img v-if="avatarUrl" :src="avatarUrl"/>
@@ -15,33 +15,33 @@
         <div>
           昵称：
           <span class="wrap-input">
-              <Input v-if="modifing" v-model="nicknameEdit"></Input>
+              <iInput v-if="modifing" v-model="nicknameEdit"></iInput>
               <span v-else>{{nicknameEdit}}</span>
           </span>
           <div v-if="modifing" style="padding-top: 10px">
             &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <Button type="success" icon="android-done" @click="handleSave">保存</Button>&nbsp;
-            <Button type="ghost" icon="android-close" @click="handleModify">取消</Button>
+            <iButton type="success" icon="android-done" @click="handleSave">保存</iButton>&nbsp;
+            <iButton type="ghost" icon="android-close" @click="handleModify">取消</iButton>
           </div>
-          <Button v-else type="info" icon="edit" @click="handleModify">修改</Button>
+          <iButton v-else type="info" icon="edit" @click="handleModify">修改</iButton>
         </div>
-      </Card>
-      <Card v-if="this.works.length > 0">
+      <!-- </Card> -->
+      <!-- <Card v-if="this.works.length > 0"> -->
         <h3 slot="title">我的发文</h3>
         <ul class="works-list">
           <li v-for="(item, index) in works" :key="index">
             <span>{{item.title}}</span>&nbsp;&nbsp;
             <span style="color: #999;">{{item.updated_at}}</span>
             <!--{{item.operation}}-->
-            <Button-group class="btn-icon" shape="circle" style="float: right;">
-              <Button v-if="item.operation" type="ghost" icon="edit" @click="handleEdit(item._id)"></Button>
-              <Button v-if="item.operation" type="ghost" icon="trash-a" @click="remove_id = item._id;modal = true;"></Button>
-              <Button v-if="item.operation" type="ghost" icon="close-round" @click="item.operation = false"></Button>
-              <Button v-else type="text" icon="navicon-round" @click="handleOperation(index)"></Button>
-            </Button-group>
+            <ButtonGroup class="btn-icon" shape="circle" style="float: right;">
+              <iButton v-if="item.operation" type="ghost" icon="edit" @click="handleEdit(item._id)"></iButton>
+              <iButton v-if="item.operation" type="ghost" icon="trash-a" @click="remove_id = item._id;modal = true;"></iButton>
+              <iButton v-if="item.operation" type="ghost" icon="close-round" @click="item.operation = false"></iButton>
+              <iButton v-else type="text" icon="navicon-round" @click="handleOperation(index)"></iButton>
+            </ButtonGroup>
           </li>
         </ul>
-      </Card>
+      <!-- </Card> -->
       <Modal v-model="modal" width="360">
         <p slot="header" style="color:#f60;text-align:center">
           <Icon type="information-circled"></Icon>
@@ -52,11 +52,11 @@
           <p>是否继续删除？</p>
         </div>
         <div slot="footer">
-          <Button type="error" size="large" long :loading="modal_loading" @click="handleRemove">删除</Button>
+          <iButton type="error" size="large" long :loading="modal_loading" @click="handleRemove">删除</iButton>
         </div>
       </Modal>
     </div>
-    <Back-top></Back-top>
+    <BackTop></BackTop>
   </div>
 </template>
 <style>
@@ -89,7 +89,8 @@
   import VueResource from 'vue-resource'
   import Cookies from 'js-cookie'
   import moment from 'moment'
-  require('moment-timezone');
+  import { Card, Icon, iInput, BackTop, Modal, ButtonGroup, iButton } from 'iview'
+  // require('moment-timezone');
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -116,6 +117,8 @@
         actionUrl: CONST_apiUrl + '/upload'
       }
     },
+    // components: { Card, Icon },
+    components: { HeaderItem, Card, Icon, iInput, BackTop, Modal, ButtonGroup, iButton },
     computed: {},
     mounted(){
       if (!Store.state.logined) {
@@ -144,9 +147,6 @@
 //        console.log(this.works);
       });
       this.fetchAvatarData();
-    },
-    components: {
-      HeaderItem
     },
     methods: {
       fetchAvatarData() {

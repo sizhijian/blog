@@ -3,42 +3,42 @@
     <HeaderItem willLogin=true></HeaderItem>
     <div class="bg-full" ref="bgFull">
       <Row>
-        <Col class="wrap-form" :xs="18" :sm="8" :md="6" :lg="4">
+        <iCol class="wrap-form" :xs="18" :sm="8" :md="6" :lg="4">
         <Tabs value="name1" ref="dasdasdas" type="card">
-          <Tab-pane label="登录" name="name1">
-            <Form ref="formLogin" :model="formLogin" :rules="rulesLogin">
-              <Form-item prop="username">
-                <Input size="large" v-model="formLogin.username" placeholder="请输入用户名" @on-enter="handleLogin('formLogin')"></Input>
-              </Form-item>
-              <Form-item prop="password">
-                <Input size="large" type="password" v-model="formLogin.password" placeholder="请输入密码" ref="afterRegFocusHere" @on-enter="handleLogin('formLogin')"></Input>
-              </Form-item>
-              <Form-item>
-                <Button type="primary" size="large" long @click="handleLogin('formLogin')">登录</Button>
-              </Form-item>
-            </Form>
-          </Tab-pane>
-          <Tab-pane label="注册" name="name2">
-            <Form ref="formRegister" :model="formRegister" :rules="rulesRegister">
-              <Form-item prop="username">
-                <Input size="large" v-model="formRegister.username" placeholder="请输入用户名" @on-enter="handleRegister('formRegister')"></Input>
-              </Form-item>
-              <Form-item prop="password">
-                <Input size="large" type="password" v-model="formRegister.password" placeholder="请输入密码" @on-enter="handleRegister('formRegister')"></Input>
-              </Form-item>
-              <Form-item prop="passCheck">
-                <Input size="large" type="password" v-model="formRegister.passCheck" placeholder="请再次输入密码" @on-enter="handleRegister('formRegister')"></Input>
-              </Form-item>
-              <Form-item prop="nickname">
-                <Input size="large" v-model="formRegister.nickname" placeholder="请输入昵称" @on-enter="handleRegister('formRegister')"></Input>
-              </Form-item>
-              <Form-item>
-                <Button type="primary" size="large" long @click="handleRegister('formRegister')">注册</Button>
-              </Form-item>
-            </Form>
-          </Tab-pane>
+          <TabPane label="登录" name="name1">
+            <iForm ref="formLogin" :model="formLogin" :rules="rulesLogin">
+              <FormItem prop="username">
+                <iInput size="large" v-model="formLogin.username" placeholder="请输入用户名" @on-enter="handleLogin('formLogin')"></iInput>
+              </FormItem>
+              <FormItem prop="password">
+                <iInput size="large" type="password" v-model="formLogin.password" placeholder="请输入密码" ref="afterRegFocusHere" @on-enter="handleLogin('formLogin')"></iInput>
+              </FormItem>
+              <FormItem>
+                <iButton type="primary" size="large" long @click="handleLogin('formLogin')">登录</iButton>
+              </FormItem>
+            </iForm>
+          </TabPane>
+          <TabPane label="注册" name="name2">
+            <iForm ref="formRegister" :model="formRegister" :rules="rulesRegister">
+              <FormItem prop="username">
+                <iInput size="large" v-model="formRegister.username" placeholder="请输入用户名" @on-enter="handleRegister('formRegister')"></iInput>
+              </FormItem>
+              <FormItem prop="password">
+                <iInput size="large" type="password" v-model="formRegister.password" placeholder="请输入密码" @on-enter="handleRegister('formRegister')"></iInput>
+              </FormItem>
+              <FormItem prop="passCheck">
+                <iInput size="large" type="password" v-model="formRegister.passCheck" placeholder="请再次输入密码" @on-enter="handleRegister('formRegister')"></iInput>
+              </FormItem>
+              <FormItem prop="nickname">
+                <iInput size="large" v-model="formRegister.nickname" placeholder="请输入昵称" @on-enter="handleRegister('formRegister')"></iInput>
+              </FormItem>
+              <FormItem>
+                <iButton type="primary" size="large" long @click="handleRegister('formRegister')">注册</iButton>
+              </FormItem>
+            </iForm>
+          </TabPane>
         </Tabs>
-        </Col>
+        </iCol>
       </Row>
     </div>
   </div>
@@ -57,6 +57,7 @@
   import VueResource from 'vue-resource'
   import md5 from 'md5'
   import Cookies from 'js-cookie'
+  import { Row, iCol, Tabs, TabPane, iForm, FormItem, iInput, iButton } from 'iview'
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -71,7 +72,7 @@
       }
     },
     components: {
-      FooterItem, HeaderItem
+      FooterItem, HeaderItem, Row, iCol, Tabs, TabPane, iForm, FormItem, iInput, iButton
     },
     data() {
       const validatePassCheck = (rule, value, callback) => {

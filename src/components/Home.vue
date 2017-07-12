@@ -36,17 +36,17 @@
                 </div>
                 <b v-if="item.author">{{item.author}}</b>
                 <span class="date">{{item.updated_at}}</span>
-                <Button-group v-if="item.isAuthor" class="btn-icon" shape="circle"
+                <ButtonGroup v-if="item.isAuthor" class="btn-icon" shape="circle"
                               style="float: right;">
-                  <Button v-if="item.operation" type="ghost" icon="edit"
-                          @click="handleEdit(item._id)"></Button>
-                  <Button v-if="item.operation" type="ghost" icon="trash-a"
-                          @click="remove_id = item._id;modal = true;"></Button>
-                  <Button v-if="item.operation" type="ghost" icon="close-round"
-                          @click="item.operation = false"></Button>
-                  <Button v-else type="text" icon="navicon-round"
-                          @click="handleOperation(index)"></Button>
-                </Button-group>
+                  <iButton v-if="item.operation" type="ghost" icon="edit"
+                          @click="handleEdit(item._id)"></iButton>
+                  <iButton v-if="item.operation" type="ghost" icon="trash-a"
+                          @click="remove_id = item._id;modal = true;"></iButton>
+                  <iButton v-if="item.operation" type="ghost" icon="close-round"
+                          @click="item.operation = false"></iButton>
+                  <iButton v-else type="text" icon="navicon-round"
+                          @click="handleOperation(index)"></iButton>
+                </ButtonGroup>
               </div>
               <h3>{{item.title}}&nbsp;<span class="tag">{{item.type}}</span></h3>
               <div class="ql-container ql-snow" style="border: none;">
@@ -71,9 +71,9 @@
               </div>
               <div class="comments" v-if="item.packUpComment">
                 <div class="comment-submit">
-                  <Input v-model="item.commentContent" placeholder="你怎么看 ..." @on-enter="handleComment(item._id, index)">
-                  <Button slot="append" icon="ios-paperplane-outline" @click="handleComment(item._id, index)"></Button>
-                  </Input>
+                  <iInput v-model="item.commentContent" placeholder="你怎么看 ..." @on-enter="handleComment(item._id, index)">
+                  <iButton slot="append" icon="ios-paperplane-outline" @click="handleComment(item._id, index)"></iButton>
+                  </iInput>
                 </div>
                 <div class="split-line"></div>
                 <div class="comment-item" v-for="item in item.comments">
@@ -107,14 +107,14 @@
               <p>是否继续删除？</p>
             </div>
             <div slot="footer">
-              <Button type="error" size="large" long :loading="modal_loading" @click="handleRemove">删除
-              </Button>
+              <iButton type="error" size="large" long :loading="modal_loading" @click="handleRemove">删除
+              </iButton>
             </div>
           </Modal>
         </div>
       </div>
     </div>
-    <Back-top></Back-top>
+    <BackTop></BackTop>
   </div>
 </template>
 <style>
@@ -231,8 +231,8 @@
   import moment from 'moment'
   import Cookies from 'js-cookie'
   import Store from '../vuex/store'
-  import Button from "../../node_modules/iview/src/components/button/button";
   require('moment-timezone');
+  import { BackTop, Row, Card, ButtonGroup, Icon, Modal, iInput, iButton } from 'iview'
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -272,7 +272,15 @@
       }
     },
     components: {
-      HeaderItem
+      HeaderItem,
+      BackTop,
+      Row,
+      Card,
+      ButtonGroup,
+      Icon,
+      Modal,
+      iInput,
+      iButton
     },
     methods: {
       fetchData(i) {

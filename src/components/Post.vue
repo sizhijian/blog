@@ -3,29 +3,29 @@
     <HeaderItem logined=logined isPost=true></HeaderItem>
     <div class="container">
       <Row>
-        <Col :lg="{span:11, offset: 1}"  :md="{span:10, offset: 1}"  :sm="{span:10, offset: 1}" :xs="{span: 22, offset: 1}">
+        <iCol :lg="{span:11, offset: 1}"  :md="{span:10, offset: 1}"  :sm="{span:10, offset: 1}" :xs="{span: 22, offset: 1}">
           <br>
           <br>
-          <Form ref="formArticle" :model="formArticle" :rules="rulesArticle">
-            <Form-item prop="title">
-              <Input v-model="formArticle.title" placeholder="请输入标题"></Input>
-            </Form-item>
-            <Form-item prop="type">
-              <Input v-if="typeList.length == 0" v-model="formArticle.type" placeholder="请输入类型"></Input>
-              <Select v-else v-model="formArticle.type">
-                <Option v-for="item in typeList" :value="item" :key="item">{{item}}</Option>
-              </Select>
-            </Form-item>
-            <Form-item prop="content">
+          <iForm ref="formArticle" :model="formArticle" :rules="rulesArticle">
+            <FormItem prop="title">
+              <iInput v-model="formArticle.title" placeholder="请输入标题"></iInput>
+            </FormItem>
+            <FormItem prop="type">
+              <iInput v-if="typeList.length == 0" v-model="formArticle.type" placeholder="请输入类型"></iInput>
+              <iSelect v-else v-model="formArticle.type">
+                <iOption v-for="item in typeList" :value="item" :key="item">{{item}}</iOption>
+              </iSelect>
+            </FormItem>
+            <FormItem prop="content">
               <vue-editor v-model="formArticle.content"></vue-editor>
-            </Form-item>
-            <Form-item>
-              <Button type="primary" @click="handleSubmit('formArticle')">提交</Button>
-              <Button type="ghost" @click="handleReset('formArticle')" style="margin-left: 8px">重置</Button>
-            </Form-item>
-          </Form>
-        </Col>
-        <Col :lg="{span:11, offset: 1}" :md="{span:10, offset: 2}" :sm="{span:10, offset: 2}" :xs="{span: 22, offset: 1}">
+            </FormItem>
+            <FormItem>
+              <iButton type="primary" @click="handleSubmit('formArticle')">提交</iButton>
+              <iButton type="ghost" @click="handleReset('formArticle')" style="margin-left: 8px">重置</iButton>
+            </FormItem>
+          </iForm>
+        </iCol>
+        <iCol :lg="{span:11, offset: 1}" :md="{span:10, offset: 2}" :sm="{span:10, offset: 2}" :xs="{span: 22, offset: 1}">
           <br>
           <h3>预览 :</h3>
           <br>
@@ -35,12 +35,10 @@
               <div class="ql-editor" v-html="formArticle.content" style="padding-left: 0;padding-right: 0;"></div>
             </div>
           </Card>
-        </Col>
+        </iCol>
       </Row>
     </div>
-    <template>
-      <Back-top></Back-top>
-    </template>
+    <BackTop></BackTop>
   </div>
 </template>
 <style>
@@ -55,6 +53,7 @@
   import Store from '../vuex/store'
   import Cookies from 'js-cookie'
   import { VueEditor } from 'vue2-editor'
+  import { Row, iCol, Card, iForm, FormItem, iInput, BackTop, iButton, iSelect, iOption } from 'iview'
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -66,7 +65,7 @@
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     },
-    components:{HeaderItem, VueEditor},
+    components:{ HeaderItem, VueEditor, Row, iCol, Card, iForm, FormItem, iInput, BackTop, iButton, iSelect, iOption },
     data(){
       const validateType = (rule, value, callback) => {
 //          console.log(value === '')

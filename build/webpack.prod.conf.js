@@ -17,6 +17,11 @@ var webpackConfig = merge(baseWebpackConfig, {
       sourceMap: config.build.productionSourceMap,
       extract: true
     })
+    // ,
+    // rules: [
+    //     { test: /iview.src.*?js$/, loader: 'babel' },
+    //     { test: /\.js$/, loader: 'babel', exclude: /node_modules/ }
+    // ]
   },
   devtool: config.build.productionSourceMap ? '#source-map' : false,
   output: {

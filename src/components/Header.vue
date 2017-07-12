@@ -139,6 +139,7 @@
 <script>
   import Store from '../vuex/store'
   import Cookies from 'js-cookie'
+  import { Icon, BackTop } from 'iview'
 
   export default {
     name: 'header',
@@ -150,6 +151,7 @@
         showBtn: false
       }
     },
+    components:{ Icon, BackTop },
     created() {
       if ('' != Cookies.get('username') && 'error' != Cookies.get('username') && undefined != Cookies.get('username') && '' != Cookies.get('pwd') && 'error' != Cookies.get('pwd') && undefined != Cookies.get('pwd')) {
         Store.commit('login');
