@@ -129,7 +129,7 @@
       }
       //随机切换背景图片
       let imgCode = 2;
-      while(imgCode === Cookies.get("imgCode")){
+      while(imgCode == Cookies.get("imgCode")){
         imgCode = Math.round(Math.random()*5+1);
       }
       let imgUrl = require('../assets/bg-0' + imgCode + '.jpg');
