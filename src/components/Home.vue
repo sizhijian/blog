@@ -49,7 +49,10 @@
                 </Button-group>
               </div>
               <h3>{{item.title}}&nbsp;<span class="tag">{{item.type}}</span></h3>
-              <div v-html="item.body" style="padding: 10px 0"></div>
+              <div class="ql-container ql-snow" style="border: none;">
+                <div v-html="item.body" class="ql-editor" style="padding-left: 0;padding-right: 0;"></div>
+              </div>
+
               <a v-if="item.showToggle" class="arrow" @click="handleToggle(index,index)">
                 <Icon v-if="item.packUp" type="ios-arrow-down"></Icon>
                 <Icon v-else type="ios-arrow-up"></Icon>
@@ -229,7 +232,7 @@
   import Cookies from 'js-cookie'
   import Store from '../vuex/store'
   import Button from "../../node_modules/iview/src/components/button/button";
-  require('moment-timezone')
+  require('moment-timezone');
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -261,10 +264,11 @@
     },
     computed: {
       compiledMarkdown: function () {
-        return this.content.filter(function (item, index) {
-          item.body = marked(item.body);
-          return item;
-        })
+        return this.content
+//          .filter(function (item, index) {
+//          item.body = marked(item.body);
+//          return item;
+//        })
       }
     },
     components: {
@@ -288,10 +292,7 @@
 //            console.log(item.updated_at)
             item.updated_at = moment(item.updated_at).tz('Asia/Shanghai').format("MM-DD HH:mm");
 //          console.log(item.updated_at)
-            item.packUpComment = false;
-            if(index == i){
-              item.packUpComment = true;
-            }
+            item.packUpComment = (index == i) ? true : false;
             item.showToggle = false;
             item.operation = false;
             item.commentContent = "";

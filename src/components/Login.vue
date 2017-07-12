@@ -122,17 +122,17 @@
       }
     },
     mounted() {
-      if ('' != Cookies.get('username') && 'error' != Cookies.get('username') && undefined != Cookies.get('username')) {
+      if ('' !== Cookies.get('username') && 'error' !== Cookies.get('username') && undefined !== Cookies.get('username')) {
         this.formLogin.username = Cookies.get('username');
       } else {
         console.log("cookie中找不到登录信息")
       }
       //随机切换背景图片
-      var imgCode = 2;
-      while(imgCode == Cookies.get("imgCode")){
+      let imgCode = 2;
+      while(imgCode === Cookies.get("imgCode")){
         imgCode = Math.round(Math.random()*5+1);
       }
-      var imgUrl = require('../assets/bg-0' + imgCode + '.jpg');
+      let imgUrl = require('../assets/bg-0' + imgCode + '.jpg');
       this.$refs.bgFull.style.backgroundImage = "url("+ imgUrl +")";
       Cookies.set("imgCode", imgCode);
     },
@@ -148,15 +148,15 @@
                 password: md5(this.formLogin.password)
               }
             ).then((response) => {
-              console.log("请求登录接口成功");
-              if (response.body.state == 1) {
+//              console.log("请求登录接口成功");
+              if (response.body.state === 1) {
                 Cookies.set("username", this.formLogin.username, { expires: 7 });
                 Cookies.set("pwd", md5(this.formLogin.password), { expires: 7 });
                 Cookies.set("nickname", response.body.nickname, { expires: 7 });
                 Store.commit('login');
                 Store.commit('getNickname', response.body.nickname);
 //                alert(Cookies.get("nickname"))
-                var returnUrl = this.$route.query.returnUrl;
+                let returnUrl = this.$route.query.returnUrl;
                 if(returnUrl){
                   this.$router.push({path: '/' + returnUrl});
                 }else{
@@ -185,9 +185,9 @@
                 nickname: this.formRegister.nickname
               }
             ).then((response) => {
-              console.log("请求注册接口成功");
-              console.log(response.body)
-              if (response.body.state == 1) {
+//              console.log("请求注册接口成功");
+//              console.log(response.body);
+              if (response.body.state === 1) {
                 this.$Message.success(response.body.info);
                 this.formLogin.username = this.formRegister.username;
                 this.formLogin.password = this.formRegister.password;

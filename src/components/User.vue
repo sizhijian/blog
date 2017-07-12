@@ -89,7 +89,7 @@
   import VueResource from 'vue-resource'
   import Cookies from 'js-cookie'
   import moment from 'moment'
-  require('moment-timezone')
+  require('moment-timezone');
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -141,7 +141,7 @@
             .startOf('second').fromNow();
         });
         this.works = response.body.info;
-        console.log(this.works);
+//        console.log(this.works);
       });
       this.fetchAvatarData();
     },
@@ -231,6 +231,10 @@
       },
       handleImgUpload(e) {
         let file = e.target.files[0];
+        if (file.size > 3145728){
+            this.$Message.warning("图片大小不能超过3M哦，请压缩后重试~");
+            return;
+        }
         let param = new FormData(); //创建form对象
         param.append('file',file,file.name);//通过append向form对象添加数据
         param.append('username',Cookies.get('username'));//添加form表单中其他数据

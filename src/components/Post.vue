@@ -6,18 +6,18 @@
         <Col :lg="{span:11, offset: 1}"  :md="{span:10, offset: 1}"  :sm="{span:10, offset: 1}" :xs="{span: 22, offset: 1}">
           <br>
           <br>
-          <Form ref="formArticle" :model="formArticle" :label-width="70" :rules="rulesArticle">
-            <Form-item label="标题" prop="title">
+          <Form ref="formArticle" :model="formArticle" :rules="rulesArticle">
+            <Form-item prop="title">
               <Input v-model="formArticle.title" placeholder="请输入标题"></Input>
             </Form-item>
-            <Form-item label="类型" prop="type">
+            <Form-item prop="type">
               <Input v-if="typeList.length == 0" v-model="formArticle.type" placeholder="请输入类型"></Input>
               <Select v-else v-model="formArticle.type">
                 <Option v-for="item in typeList" :value="item" :key="item">{{item}}</Option>
               </Select>
             </Form-item>
-            <Form-item label="正文" prop="content">
-              <Input v-model="formArticle.content" type="textarea" :autosize="{minRows: 5,maxRows: 30}" placeholder="请输入正文"></Input>
+            <Form-item prop="content">
+              <vue-editor v-model="formArticle.content"></vue-editor>
             </Form-item>
             <Form-item>
               <Button type="primary" @click="handleSubmit('formArticle')">提交</Button>
@@ -31,7 +31,9 @@
           <br>
           <Card>
             <p slot="title">{{formArticle.title}}</p>
-            <div v-html="compiledMarkdown"></div>
+            <div class="ql-container ql-snow" style="border: none;">
+              <div class="ql-editor" v-html="formArticle.content" style="padding-left: 0;padding-right: 0;"></div>
+            </div>
           </Card>
         </Col>
       </Row>
@@ -41,9 +43,9 @@
     </template>
   </div>
 </template>
-<style scoped>
-  .wrap-content{width: 90%;
-    margin:10px auto;}
+<style>
+  .ql-container {background: #fff;}
+  #quill-container {height: auto;min-height: 250px;}
 </style>
 <script>
   import HeaderItem from './Header'
@@ -52,6 +54,7 @@
   import VueResource from 'vue-resource'
   import Store from '../vuex/store'
   import Cookies from 'js-cookie'
+  import { VueEditor } from 'vue2-editor'
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -63,10 +66,10 @@
         'Content-Type': 'application/x-www-form-urlencoded'
       }
     },
-    components:{HeaderItem},
+    components:{HeaderItem, VueEditor},
     data(){
       const validateType = (rule, value, callback) => {
-          console.log(value === '')
+//          console.log(value === '')
         if (value === '' && this.typeList.length == 0) {
           callback(new Error('请输入类型'));
         } else if (value === '' && this.typeList.length > 0) {
@@ -104,9 +107,7 @@
       });
     },
     mounted() {
-      console.log(this.$route.query.id)
       if (this.$route.query.id) {
-        // console.log(1)
         this.$http.get(
           CONST_apiUrl+ "/articles",
           {
@@ -116,7 +117,7 @@
           }
         ).then((response) => {
           if (response.body.state == 1 ) {
-            console.log(response.body.info)
+//            console.log(response.body.info)
             let data = response.body.info;
             this.formArticle.title = data.title;
             this.formArticle.type = data.type;

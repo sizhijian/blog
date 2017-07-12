@@ -7,7 +7,7 @@ import router from './router'
 import 'iview/dist/styles/iview.css'
 
 global.CONST_apiUrl = 'http://sizhijian.com:3000';
-// global.CONST_apiUrl = 'http://192.168.1.68:3000';
+// global.CONST_apiUrl = 'http://192.168.1.53:3000';
 Vue.config.productionTip = false;
 
 Vue.use(iView);
