@@ -26,7 +26,7 @@
       <div class="tabs-con" v-if="content.length != 0">
         <div class="tabs-tabpane">
           <Row class="container" type="flex" justify="center" align="top">
-            <Col :xs="24" :sm="24">
+            <iCol :xs="24" :sm="24">
             <Card v-for="(item , index) in compiledMarkdown" :key="index" :class="{active : item.packUp} "
                   style="margin-left: 10px;margin-right: 10px;">
               <div v-if="item.author" class="wrap-usrinfo">
@@ -91,7 +91,7 @@
                 </div>
               </div>
             </Card>
-            </Col>
+            </iCol>
           </Row>
           <Modal class="showFullImg" :closable="false" cancel-text="" v-model="showFullVisible" class-name="vertical-center-modal">
               <img :src="showFullUrl" style="width: 100%">
@@ -231,8 +231,8 @@
   import moment from 'moment'
   import Cookies from 'js-cookie'
   import Store from '../vuex/store'
+  import { BackTop, Row, iCol, Card, ButtonGroup, Icon, Modal, iInput, iButton } from 'iview'
   require('moment-timezone');
-  import { BackTop, Row, Card, ButtonGroup, Icon, Modal, iInput, iButton } from 'iview'
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -275,6 +275,7 @@
       HeaderItem,
       BackTop,
       Row,
+      iCol,
       Card,
       ButtonGroup,
       Icon,

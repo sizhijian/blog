@@ -3,7 +3,7 @@
     <HeaderItem logined="logined" :updatedNickname="updatedNickname" :requireLogin="true">
     </HeaderItem>
     <div class="container" style="padding: 10px">
-      <!-- <Card> -->
+      <Card>
           <h2 style="margin-bottom: 5px;">
             <div class="wrap-upload">
                 <img v-if="avatarUrl" :src="avatarUrl"/>
@@ -25,8 +25,8 @@
           </div>
           <iButton v-else type="info" icon="edit" @click="handleModify">修改</iButton>
         </div>
-      <!-- </Card> -->
-      <!-- <Card v-if="this.works.length > 0"> -->
+      </Card>
+      <Card v-if="this.works.length > 0">
         <h3 slot="title">我的发文</h3>
         <ul class="works-list">
           <li v-for="(item, index) in works" :key="index">
@@ -41,7 +41,7 @@
             </ButtonGroup>
           </li>
         </ul>
-      <!-- </Card> -->
+      </Card>
       <Modal v-model="modal" width="360">
         <p slot="header" style="color:#f60;text-align:center">
           <Icon type="information-circled"></Icon>
@@ -90,7 +90,7 @@
   import Cookies from 'js-cookie'
   import moment from 'moment'
   import { Card, Icon, iInput, BackTop, Modal, ButtonGroup, iButton } from 'iview'
-  // require('moment-timezone');
+  require('moment-timezone');
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -117,7 +117,6 @@
         actionUrl: CONST_apiUrl + '/upload'
       }
     },
-    // components: { Card, Icon },
     components: { HeaderItem, Card, Icon, iInput, BackTop, Modal, ButtonGroup, iButton },
     computed: {},
     mounted(){
