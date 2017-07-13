@@ -301,8 +301,8 @@
 //            console.log(item.updated_at)
             item.updated_at = moment(item.updated_at).tz('Asia/Shanghai').format("MM-DD HH:mm");
 //          console.log(item.updated_at)
-//            item.packUpComment = (index == i) ? true : false;
-            item.packUpComment = true;
+            item.packUpComment = (index == i) ? true : false;
+//            item.packUpComment = true;
             item.showToggle = false;
             item.operation = false;
             item.commentContent = "";
