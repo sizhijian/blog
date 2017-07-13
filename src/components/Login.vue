@@ -57,7 +57,7 @@
   import VueResource from 'vue-resource'
   import md5 from 'md5'
   import Cookies from 'js-cookie'
-  import { Row, iCol, Tabs, TabPane, iForm, FormItem, iInput, iButton } from 'iview'
+  import { Row, iCol, Tabs, TabPane, iForm, FormItem, iInput, iButton, Message } from 'iview'
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -164,14 +164,14 @@
                   this.$router.push({path: '/'});
                 }
               } else {
-                this.$Message.error(response.body.info);
+                Message.error(response.body.info);
               }
             }, (error) => {
-              this.$Message.warning('接口通信异常!');
+              Message.warning('接口通信异常!');
               console.log(error)
             });
           } else {
-//            this.$Message.error('表单验证失败!');
+//            Message.error('表单验证失败!');
           }
         })
       },
@@ -189,21 +189,21 @@
 //              console.log("请求注册接口成功");
 //              console.log(response.body);
               if (response.body.state === 1) {
-                this.$Message.success(response.body.info);
+                Message.success(response.body.info);
                 this.formLogin.username = this.formRegister.username;
                 this.formLogin.password = this.formRegister.password;
                 this.$refs['formRegister'].resetFields();
                 document.getElementsByClassName("ivu-tabs-tab")[0].click();
                 this.$refs.afterRegFocusHere.focus();
               } else {
-                this.$Message.error(response.body.info);
+                Message.error(response.body.info);
               }
             }, (error) => {
-              this.$Message.warning('接口通信异常!');
+              Message.warning('接口通信异常!');
               console.log(error)
             });
           } else {
-//            this.$Message.error('表单验证失败!');
+//            Message.error('表单验证失败!');
           }
         })
       }

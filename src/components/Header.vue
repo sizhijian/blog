@@ -139,7 +139,7 @@
 <script>
   import Store from '../vuex/store'
   import Cookies from 'js-cookie'
-  import { Icon } from 'iview'
+  import { Icon, Message } from 'iview'
 
   export default {
     name: 'header',
@@ -191,7 +191,7 @@
         if (this.logined) {
           this.$router.push({path: '/post'});
         } else {
-          this.$Message.warning('请先登录 !');
+          Message.warning('请先登录 !');
         }
       },
       toggleBtns() {

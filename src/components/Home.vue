@@ -80,7 +80,7 @@
                   <div class="comment-header">
                     <div class="wrap-avatar" @click="handleShowFull">
                       <img v-if="item.avatarUrl" :src="item.avatarUrl" alt="">
-                      <img v-else src="http://sizhijian.com:3000/files/avatar.png" alt="">
+                      <img v-else src="http://sizhijian.com:3000/files/avatar.png" alt="默认头像">
                     </div>
                     <b>{{item.reviewer}}</b>
                     <!--{{item.isAuthor}}-->
@@ -231,7 +231,7 @@
   import moment from 'moment'
   import Cookies from 'js-cookie'
   import Store from '../vuex/store'
-  import { BackTop, Row, iCol, Card, ButtonGroup, Icon, Modal, iInput, iButton } from 'iview'
+  import { BackTop, Row, iCol, Card, ButtonGroup, Icon, Modal, iInput, iButton, Message } from 'iview'
   require('moment-timezone');
 
   Vue.use(VueResource);
@@ -301,13 +301,14 @@
 //            console.log(item.updated_at)
             item.updated_at = moment(item.updated_at).tz('Asia/Shanghai').format("MM-DD HH:mm");
 //          console.log(item.updated_at)
-            item.packUpComment = (index == i) ? true : false;
+//            item.packUpComment = (index == i) ? true : false;
+            item.packUpComment = true;
             item.showToggle = false;
             item.operation = false;
             item.commentContent = "";
             if(item.comments){
               item.comments.forEach((item) => {
-                moment.locale('zh-cn')
+                moment.locale('zh-cn');
 //                  console.log(moment.locale())
                 item.date = moment(item.date).tz('Asia/Shanghai')
 //                  .format("MM-DD HH:mm");
@@ -344,7 +345,7 @@
           if (response.body.state == 1) {
             this.modal_loading = false;
             this.modal = false;
-            this.$Message.success(response.body.info);
+            Message.success(response.body.info);
             this.content.forEach((item, index) => {
               if (item._id == this.remove_id) {
                 this.content.splice(index, 1)
@@ -353,7 +354,7 @@
           } else {
             this.modal_loading = false;
             this.modal = false;
-            this.$Message.error(response.body.info);
+            Message.error(response.body.info);
           }
         })
       },
@@ -364,7 +365,7 @@
 //          console.log(typeof this.compiledMarkdown[index].commentContent);
         if (Store.state.logined) {
           if (this.compiledMarkdown[index].commentContent.length == 0) {
-            this.$Message.error("评论不能为空 ~")
+            Message.error("评论不能为空 ~")
           } else {
             this.$http.post(
               CONST_apiUrl + "/comment",{
@@ -374,17 +375,17 @@
               }
             ).then((response) => {
               if (response.body.state == 1) {
-                this.$Message.success(response.body.info);
+                Message.success(response.body.info);
 //                console.log(typeof this.compiledMarkdown[index].commentContent)
                 this.compiledMarkdown[index].commentContent = "";
                 this.fetchData(index);
               } else {
-                this.$Message.error(response.body.info);
+                Message.error(response.body.info);
               }
             })
           }
         } else {
-          this.$Message.error("请先登录 ~")
+          Message.error("请先登录 ~")
         }
       },
       handleShowFull (event) {

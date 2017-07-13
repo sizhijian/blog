@@ -53,7 +53,7 @@
   import Store from '../vuex/store'
   import Cookies from 'js-cookie'
   import { VueEditor } from 'vue2-editor'
-  import { Row, iCol, Card, iForm, FormItem, iInput, BackTop, iButton, iSelect, iOption } from 'iview'
+  import { Row, iCol, Card, iForm, FormItem, iInput, BackTop, iButton, iSelect, iOption, Message } from 'iview'
 
   Vue.use(VueResource);
   Vue.http.options.emulateJSON = true;
@@ -148,7 +148,7 @@
                   if (response.body.state == 1) {
                      this.$router.push({path: '/'});
                   } else {
-                    this.$Message.error(response.body.info);
+                    Message.error(response.body.info);
                   }
                 });
               }else{
@@ -162,13 +162,13 @@
                   if (response.body.state == 1) {
                      this.$router.push({path: '/'});
                   } else {
-                    this.$Message.error(response.body.info);
+                    Message.error(response.body.info);
                   }
                 });
               }
 
             }else {
-              this.$Message.error("登陆后才能发表~")
+              Message.error("登陆后才能发表~")
             }
 
           }else {

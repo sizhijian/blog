@@ -89,7 +89,7 @@
   import VueResource from 'vue-resource'
   import Cookies from 'js-cookie'
   import moment from 'moment'
-  import { Card, Icon, iInput, BackTop, Modal, ButtonGroup, iButton } from 'iview'
+  import { Card, Icon, iInput, BackTop, Modal, ButtonGroup, iButton, Message } from 'iview'
   require('moment-timezone');
 
   Vue.use(VueResource);
@@ -166,11 +166,11 @@
       },
       handleSave() {
         if (this.nicknameEdit == "") {
-          this.$Message.error("昵称不能为空");
+          Message.error("昵称不能为空");
           return;
         }
         if (this.nicknameEdit == this.nickname) {
-          this.$Message.warning("您未做任何修改");
+          Message.warning("您未做任何修改");
           return;
         }
         this.$http.post(
@@ -180,7 +180,7 @@
           }
         ).then((response) => {
           if (response.body.state == 1) {
-            this.$Message.success(response.body.info);
+            Message.success(response.body.info);
             Cookies.set("nickname", this.nicknameEdit);
 //            console.log("更新后的昵称: " + Cookies.get("nickname"));
             this.nickname = Cookies.get("nickname");
@@ -188,10 +188,10 @@
             Store.commit("getNickname", Cookies.get("nickname"))
             this.modifing = false;
           } else {
-            this.$Message.error(response.body.info);
+            Message.error(response.body.info);
           }
         }, (error) => {
-          this.$Message.warning('接口通信异常!');
+          Message.warning('接口通信异常!');
           console.log(error)
         });
       },
@@ -212,7 +212,7 @@
           if (response.body.state == 1) {
             this.modal_loading = false;
             this.modal = false;
-            this.$Message.success(response.body.info);
+            Message.success(response.body.info);
             this.works.forEach((item, index) => {
               if (item._id == this.remove_id) {
                 this.works.splice(index, 1)
@@ -221,7 +221,7 @@
           } else {
             this.modal_loading = false;
             this.modal = false;
-            this.$Message.error(response.body.info);
+            Message.error(response.body.info);
           }
         })
       },
@@ -231,7 +231,7 @@
       handleImgUpload(e) {
         let file = e.target.files[0];
         if (file.size > 3145728){
-            this.$Message.warning("图片大小不能超过3M哦，请压缩后重试~");
+            Message.warning("图片大小不能超过3M哦，请压缩后重试~");
             return;
         }
         let param = new FormData(); //创建form对象
@@ -241,10 +241,10 @@
         this.$http.post(CONST_apiUrl+'/upload',param)
           .then(response=>{
             if (response.body.state == 1) {
-              this.$Message.success(response.body.info);
+              Message.success(response.body.info);
               this.fetchAvatarData();
             } else {
-              this.$Message.error(response.body.info);
+              Message.error(response.body.info);
             }
           })
       }
