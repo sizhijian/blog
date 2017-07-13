@@ -168,7 +168,7 @@
               }
 
             }else {
-              Message.error("登陆后才能发表~")
+              Message.warning("登陆后才能发表~")
             }
 
           }else {

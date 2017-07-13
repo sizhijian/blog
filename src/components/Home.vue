@@ -365,7 +365,7 @@
 //          console.log(typeof this.compiledMarkdown[index].commentContent);
         if (Store.state.logined) {
           if (this.compiledMarkdown[index].commentContent.length == 0) {
-            Message.error("评论不能为空 ~")
+            Message.warning("评论不能为空 ~")
           } else {
             this.$http.post(
               CONST_apiUrl + "/comment",{
@@ -385,7 +385,7 @@
             })
           }
         } else {
-          Message.error("请先登录 ~")
+          Message.warning("请先登录 ~")
         }
       },
       handleShowFull (event) {

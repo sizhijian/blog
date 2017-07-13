@@ -166,13 +166,13 @@
       },
       handleSave() {
         if (this.nicknameEdit == "") {
-          Message.error("昵称不能为空");
+          Message.warning("昵称不能为空");
           return;
         }
-        if (this.nicknameEdit == this.nickname) {
-          Message.warning("您未做任何修改");
-          return;
-        }
+//        if (this.nicknameEdit == this.nickname) {
+//          Message.warning("您未做任何修改");
+//          return;
+//        }
         this.$http.post(
           CONST_apiUrl + '/modify', {
             username: Cookies.get("username"),
