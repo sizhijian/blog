@@ -32,7 +32,7 @@
             <Icon type="person"></Icon>&nbsp;&nbsp;个人中心
           </router-link>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" @click="handleLogout(requireLogin, reFetchDate)">
+          <a class="dropdown-item" @click="handleLogout(requireLogin, logout)">
             <Icon type="log-out"></Icon>&nbsp;&nbsp;登出</a>
         </div>
       </div>
@@ -143,7 +143,7 @@
 
   export default {
     name: 'header',
-    props: ['home', 'isPost', 'willLogin', "updatedNickname", "requireLogin", "reFetchDate"],
+    props: ['home', 'isPost', 'willLogin', "updatedNickname", "requireLogin", "logout"],
     data() {
       return {
         logined: Store.state.logined,
@@ -172,7 +172,7 @@
       })
     },
     methods: {
-      handleLogout(e, fetchData) {
+      handleLogout(e, logout) {
         Cookies.remove('pwd');
         Cookies.remove('nickname');
         Store.commit('logout');
@@ -181,8 +181,8 @@
         if (e) {
           this.$router.push({path: "/login?returnUrl=user"})
         }
-        if (fetchData) {
-          this.$emit('fetchData', '')
+        if (logout) {
+          this.$emit('handleLogout', '')
         }
 
 //        this.$router.push({path:'/login'})
