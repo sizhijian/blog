@@ -49,22 +49,13 @@
   import HeaderItem from './Header'
   import marked from 'marked'
   import Vue from 'vue'
-  import VueResource from 'vue-resource'
+  import axios from 'axios'
   import Store from '../vuex/store'
   import Cookies from 'js-cookie'
   import { VueEditor } from 'vue2-editor'
   import { Row, iCol, Card, iForm, FormItem, iInput, BackTop, iButton, iSelect, iOption, Message } from 'iview'
 
-  Vue.use(VueResource);
-  Vue.http.options.emulateJSON = true;
-
   export default{
-    http: {
-      root: '/root',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    },
     components:{ HeaderItem, VueEditor, Row, iCol, Card, iForm, FormItem, iInput, BackTop, iButton, iSelect, iOption },
     data(){
       const validateType = (rule, value, callback) => {
@@ -99,15 +90,15 @@
       }
     },
     created() {
-      this.$http.get(CONST_apiUrl + "/articlesType")
+      axios.get(CONST_apiUrl + "/articlesType")
         .then((response) => {
-//          console.log(response.body);
-          this.typeList = response.body.info;
+//          console.log(response.data);
+          this.typeList = response.data.info;
       });
     },
     mounted() {
       if (this.$route.query.id) {
-        this.$http.get(
+        axios.get(
           CONST_apiUrl+ "/articles",
           {
             params: {
@@ -115,9 +106,9 @@
             }
           }
         ).then((response) => {
-          if (response.body.state == 1 ) {
-//            console.log(response.body.info)
-            let data = response.body.info;
+          if (response.data.state == 1 ) {
+//            console.log(response.data.info)
+            let data = response.data.info;
             this.formArticle.title = data.title;
             this.formArticle.type = data.type;
             this.formArticle.content = data.body;
@@ -138,31 +129,31 @@
             if (Store.state.logined) {
               if (this.editId != 0){
                 console.log("edit.....")
-                this.$http.post(CONST_apiUrl + "/post",{
+                axios.post(CONST_apiUrl + "/post",{
                   id: this.editId,
                   title:this.formArticle.title,
                   type:this.formArticle.type,
                   author:Cookies.get("username"),
                   content:this.formArticle.content
                 }).then((response)=>{
-                  if (response.body.state == 1) {
+                  if (response.data.state == 1) {
                      this.$router.push({path: '/'});
                   } else {
-                    Message.error(response.body.info);
+                    Message.error(response.data.info);
                   }
                 });
               }else{
                 console.log("submit.....")
-                this.$http.post(CONST_apiUrl + "/post",{
+                axios.post(CONST_apiUrl + "/post",{
                   title:this.formArticle.title,
                   type:this.formArticle.type,
                   author:Cookies.get("username"),
                   content:this.formArticle.content
                 }).then((response)=>{
-                  if (response.body.state == 1) {
+                  if (response.data.state == 1) {
                      this.$router.push({path: '/'});
                   } else {
-                    Message.error(response.body.info);
+                    Message.error(response.data.info);
                   }
                 });
               }

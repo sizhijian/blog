@@ -10,6 +10,35 @@
                 <Icon v-else class="icon" type="camera" size="20"></Icon>
                 <input name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="handleImgUpload"/>
             </div>
+            <vueAvatar
+              :width=200
+              :height=200
+              ref="vueavatar"
+              @vue-avatar-editor:image-ready="onImageReady"
+            >
+            </vueAvatar>
+            <div class="">
+              <!-- <vueAvatar
+                :width=avatarWidth
+                :height=avatarHeigth
+                ref="vueavatar"
+                @vue-avatar-editor:image-ready="onImageReady"
+              >
+              </vueAvatar> -->
+              <br>
+              <vueAvatarScale
+                ref="vueavatarscale"
+                @vue-avatar-editor-scale:change-scale="onChangeScale"
+                :width=250
+                :min=1
+                :max=3
+                :step=0.02
+              >
+              </vueAvatarScale>
+              <br>
+              <!-- <img src="" id="img-1"> -->
+              <iButton @click="saveClicked" type="success" long>Click</iButton>
+            </div>
           {{nickname}}
         </h2>
         <div>
@@ -85,23 +114,18 @@
 <script>
   import HeaderItem from './Header'
   import Vue from 'vue'
+  import axios from 'axios'
   import Store from '../vuex/store'
-  import VueResource from 'vue-resource'
   import Cookies from 'js-cookie'
   import moment from 'moment'
   import { Card, Icon, iInput, BackTop, Modal, ButtonGroup, iButton, Message } from 'iview'
   require('moment-timezone');
+  import VueAvatar from './VueAvatar'
+  import VueAvatarScale from './VueAvatarScale'
+  // import {Canvas2Image} from './canvas2image'
 
-  Vue.use(VueResource);
-  Vue.http.options.emulateJSON = true;
-
+  // console.log(window.document.documentElement.clientWidth);
   export default {
-    http: {
-      root: '/root',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    },
     data () {
       return {
         nickname: Store.state.nickname,
@@ -112,12 +136,13 @@
         remove_id: "",
         modal: false,
         modal_loading: false,
-        avatarUrl: "",
-
-        actionUrl: CONST_apiUrl + '/upload'
+        avatarUrl: "http://sizhijian.com:3000/files/avatar.png",
+        actionUrl: CONST_apiUrl + '/upload',
+        avatarWidth: window.document.documentElement.clientWidth/2,
+        avatarHeigth: window.document.documentElement.clientWidth/2
       }
     },
-    components: { HeaderItem, Card, Icon, iInput, BackTop, Modal, ButtonGroup, iButton },
+    components: { HeaderItem, Card, Icon, iInput, BackTop, Modal, ButtonGroup, iButton, VueAvatar, VueAvatarScale},
     computed: {},
     mounted(){
       if (!Store.state.logined) {
@@ -127,7 +152,7 @@
       this.nicknameEdit = Cookies.get("nickname");
       this.nickname = Cookies.get("nickname");
 
-      this.$http.get(
+      axios.get(
         CONST_apiUrl + '/articles',
         {
           params: {
@@ -135,21 +160,56 @@
           }
         }
       ).then((response) => {
-//                console.log(response.body.info)
-        response.body.info.forEach((item) => {
+//                console.log(response.data.info)
+        response.data.info.forEach((item) => {
           item.operation = false;
           moment.locale('zh-cn')
           item.updated_at = moment(item.updated_at).tz('Asia/Shanghai')
             .startOf('second').fromNow();
         });
-        this.works = response.body.info;
+        this.works = response.data.info;
 //        console.log(this.works);
       });
       this.fetchAvatarData();
     },
     methods: {
+      onChangeScale (scale) {
+        this.$refs.vueavatar.changeScale(scale)
+      },
+      saveClicked(){
+        var img = this.$refs.vueavatar.getImageScaled();
+        function isCanvasBlank(canvas) {
+            var blank = document.createElement('canvas');
+            blank.width = canvas.width;
+            blank.height = canvas.height;
+
+            return canvas.toDataURL() == blank.toDataURL();
+        }
+        if (isCanvasBlank(img)) {
+          Message.warning("请选择一张图片再进行上传");
+          return;
+        }
+        axios.post(CONST_apiUrl+'/upload',
+        {
+          imageURL: img.toDataURL(),
+          username: Cookies.get('username')
+        }
+        )
+          .then(response=>{
+            console.log(response)
+            if (response.data.state == 1) {
+              Message.success(response.data.info);
+              this.fetchAvatarData();
+            } else {
+              Message.error(response.data.info);
+            }
+          })
+      },
+      onImageReady(scale){
+        this.$refs.vueavatarscale.setScale(scale)
+      },
       fetchAvatarData() {
-        this.$http.get(
+        axios.get(
           CONST_apiUrl + '/login',
           {
             params: {
@@ -157,7 +217,7 @@
             }
           }
         ).then((response) => {
-             this.avatarUrl = response.body.info
+             this.avatarUrl = response.data.info
         });
       },
       handleModify() {
@@ -173,14 +233,14 @@
 //          Message.warning("您未做任何修改");
 //          return;
 //        }
-        this.$http.post(
+        axios.post(
           CONST_apiUrl + '/modify', {
             username: Cookies.get("username"),
             nickname: this.nicknameEdit
           }
         ).then((response) => {
-          if (response.body.state == 1) {
-            Message.success(response.body.info);
+          if (response.data.state == 1) {
+            Message.success(response.data.info);
             Cookies.set("nickname", this.nicknameEdit);
 //            console.log("更新后的昵称: " + Cookies.get("nickname"));
             this.nickname = Cookies.get("nickname");
@@ -188,7 +248,7 @@
             Store.commit("getNickname", Cookies.get("nickname"))
             this.modifing = false;
           } else {
-            Message.error(response.body.info);
+            Message.error(response.data.info);
           }
         }, (error) => {
           Message.warning('接口通信异常!');
@@ -203,16 +263,16 @@
       },
       handleRemove() {
         this.modal_loading = true;
-        this.$http.post(
+        axios.post(
           CONST_apiUrl + '/remove', {
             username: Cookies.get("username"),
             id: this.remove_id
           }
         ).then((response) => {
-          if (response.body.state == 1) {
+          if (response.data.state == 1) {
             this.modal_loading = false;
             this.modal = false;
-            Message.success(response.body.info);
+            Message.success(response.data.info);
             this.works.forEach((item, index) => {
               if (item._id == this.remove_id) {
                 this.works.splice(index, 1)
@@ -221,7 +281,7 @@
           } else {
             this.modal_loading = false;
             this.modal = false;
-            Message.error(response.body.info);
+            Message.error(response.data.info);
           }
         })
       },
@@ -229,24 +289,7 @@
         this.$router.push({path:"/post?id="+id})
       },
       handleImgUpload(e) {
-        let file = e.target.files[0];
-        if (file.size > 3145728){
-            Message.warning("图片大小不能超过3M哦，请压缩后重试~");
-            return;
-        }
-        let param = new FormData(); //创建form对象
-        param.append('file',file,file.name);//通过append向form对象添加数据
-        param.append('username',Cookies.get('username'));//添加form表单中其他数据
-        //console.log(param.get('file')); //FormData私有类对象，访问不到，可以通过get判断值是否传进去
-        this.$http.post(CONST_apiUrl+'/upload',param)
-          .then(response=>{
-            if (response.body.state == 1) {
-              Message.success(response.body.info);
-              this.fetchAvatarData();
-            } else {
-              Message.error(response.body.info);
-            }
-          })
+        this.$refs.vueavatar.fileSelected(e);
       }
     }
   }

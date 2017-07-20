@@ -123,7 +123,7 @@
 import HeaderItem from './Header'
 import marked from 'marked'
 import Vue from 'vue'
-import VueResource from 'vue-resource'
+import axios from 'axios'
 import moment from 'moment'
 import Cookies from 'js-cookie'
 import Store from '../vuex/store'
@@ -142,16 +142,7 @@ import {
 } from 'iview'
 require('moment-timezone');
 
-Vue.use(VueResource);
-Vue.http.options.emulateJSON = true;
-
 export default {
-  http: {
-    root: '/root',
-    headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    }
-  },
   data() {
     return {
       activeIndex: 0,
@@ -218,7 +209,7 @@ export default {
       if (Store.state.logined) {
         username = Cookies.get('username');
       }
-      this.$http.get(
+      axios.get(
         CONST_apiUrl + '/articles', {
           params: {
             username: username,
@@ -226,8 +217,8 @@ export default {
           }
         }
       ).then((response) => {
-        //          console.log(response.body.info)
-        response.body.info.forEach((item, index) => {
+        //          console.log(response.data.info)
+        response.data.info.forEach((item, index) => {
           //            console.log(item.updated_at)
           item.updated_at = moment(item.updated_at).tz('Asia/Shanghai').format("MM-DD HH:mm");
           //          console.log(item.updated_at)
@@ -248,21 +239,21 @@ export default {
         });
 
           if (skip == 0) {
-            this.content = response.body.info;
-          } else if (response.body.info.length == 10) {
+            this.content = response.data.info;
+          } else if (response.data.info.length == 10) {
             // console.log("concating...")
-            this.content = this.content.concat(response.body.info)
+            this.content = this.content.concat(response.data.info)
             this.data_loading = false;
             this.requestLock = false;
           } else {
             this.data_loading = false;
             this.requestLock = true;
-            this.content = this.content.concat(response.body.info)
+            this.content = this.content.concat(response.data.info)
             this.isBottom = true;
             console.log("here is bottom")
         }
 
-        // this.content = response.body.info;
+        // this.content = response.data.info;
         // console.log(JSON.stringify(this.content.length));
       });
     },
@@ -285,18 +276,18 @@ export default {
     },
     handleRemove() {
       this.modal_loading = true;
-      console.log(this.remove_id)
-      console.log(Cookies.get("username"))
-      this.$http.post(
+      // console.log(this.remove_id)
+      // console.log(Cookies.get("username"))
+      axios.post(
         CONST_apiUrl + '/remove', {
           username: Cookies.get("username"),
           id: this.remove_id
         }
       ).then((response) => {
-        if (response.body.state == 1) {
+        if (response.data.state == 1) {
           this.modal_loading = false;
           this.modal = false;
-          Message.success(response.body.info);
+          Message.success(response.data.info);
           this.content.forEach((item, index) => {
             if (item._id == this.remove_id) {
               this.content.splice(index, 1)
@@ -305,7 +296,7 @@ export default {
         } else {
           this.modal_loading = false;
           this.modal = false;
-          Message.error(response.body.info);
+          Message.error(response.data.info);
         }
       })
     },
@@ -320,20 +311,20 @@ export default {
         if (this.compiledMarkdown[index].commentContent.length == 0) {
           Message.warning("评论不能为空 ~")
         } else {
-          this.$http.post(
+          axios.post(
             CONST_apiUrl + "/comment", {
               username: Cookies.get("username"),
               id: id,
               body: this.compiledMarkdown[index].commentContent
             }
           ).then((response) => {
-            if (response.body.state == 1) {
-              Message.success(response.body.info);
+            if (response.data.state == 1) {
+              Message.success(response.data.info);
               //                console.log(typeof this.compiledMarkdown[index].commentContent)
               this.compiledMarkdown[index].commentContent = "";
               this.fetchData(index);
             } else {
-              Message.error(response.body.info);
+              Message.error(response.data.info);
             }
           })
         }

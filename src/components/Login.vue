@@ -54,23 +54,13 @@
   import HeaderItem from './Header'
   import Store from '../vuex/store'
   import Vue from 'vue'
-  import VueResource from 'vue-resource'
+  import axios from 'axios'
   import md5 from 'md5'
   import Cookies from 'js-cookie'
   import { Row, iCol, Tabs, TabPane, iForm, FormItem, iInput, iButton, Message } from 'iview'
 
-  Vue.use(VueResource);
-  Vue.http.options.emulateJSON = true;
-
-
   export default {
-    name: 'hello',
-    http: {
-      root: '/root',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      }
-    },
+    name: 'login',
     components: {
       FooterItem, HeaderItem, Row, iCol, Tabs, TabPane, iForm, FormItem, iInput, iButton
     },
@@ -142,20 +132,20 @@
         this.$refs[name].validate((valid) => {
           if (valid) {
             //this.$http.jsonp('http://api.map.baidu.com/telematics/v3/weather?location=北京&output=json&ak=6tYzTvGZSOpYB5Oc2YGGOKt8').
-            this.$http.post(
+            axios.post(
               CONST_apiUrl + '/login',
               {
                 username: this.formLogin.username,
                 password: md5(this.formLogin.password)
               }
             ).then((response) => {
-//              console.log("请求登录接口成功");
-              if (response.body.state === 1) {
+            //  console.log("请求登录接口成功");
+              if (response.data.state === 1) {
                 Cookies.set("username", this.formLogin.username, { expires: 7 });
                 Cookies.set("pwd", md5(this.formLogin.password), { expires: 7 });
-                Cookies.set("nickname", response.body.nickname, { expires: 7 });
+                Cookies.set("nickname", response.data.nickname, { expires: 7 });
                 Store.commit('login');
-                Store.commit('getNickname', response.body.nickname);
+                Store.commit('getNickname', response.data.nickname);
 //                alert(Cookies.get("nickname"))
                 let returnUrl = this.$route.query.returnUrl;
                 if(returnUrl){
@@ -164,7 +154,7 @@
                   this.$router.push({path: '/'});
                 }
               } else {
-                Message.error(response.body.info);
+                Message.error(response.data.info);
               }
             }, (error) => {
               Message.warning('接口通信异常!');
@@ -178,7 +168,7 @@
       handleRegister(name) {
         this.$refs[name].validate((valid) => {
           if (valid) {
-            this.$http.post(
+            axios.post(
               CONST_apiUrl +'/register',
               {
                 username: this.formRegister.username,
@@ -187,16 +177,16 @@
               }
             ).then((response) => {
 //              console.log("请求注册接口成功");
-//              console.log(response.body);
-              if (response.body.state === 1) {
-                Message.success(response.body.info);
+//              console.log(response.data);
+              if (response.data.state === 1) {
+                Message.success(response.data.info);
                 this.formLogin.username = this.formRegister.username;
                 this.formLogin.password = this.formRegister.password;
                 this.$refs['formRegister'].resetFields();
                 document.getElementsByClassName("ivu-tabs-tab")[0].click();
                 this.$refs.afterRegFocusHere.focus();
               } else {
-                Message.error(response.body.info);
+                Message.error(response.data.info);
               }
             }, (error) => {
               Message.warning('接口通信异常!');
