@@ -5,43 +5,31 @@
   <div class="container">
     <Card>
       <h2 style="margin-bottom: 5px;">
-          <div class="wrap-upload">
+          <div class="wrap-upload" style="margin-bottom: 10px;">
               <img v-if="avatarUrl" :src="avatarUrl"/>
               <Icon v-else class="icon" type="camera" size="20"></Icon>
               <input name="file" type="file" accept="image/png,image/gif,image/jpeg" @change="handleImgUpload"/>
           </div>
-          <div style="height: 20px;background: #000;">
-
-          </div>
           <vueAvatar
-            :width=200
-            :height=200
             ref="vueavatar"
             @vue-avatar-editor:image-ready="onImageReady"
+            style="font-size: 0;margin-bottom: 10px;"
           >
           </vueAvatar>
-          <div class="">
-            <!-- <vueAvatar
-              :width=avatarWidth
-              :height=avatarHeigth
-              ref="vueavatar"
-              @vue-avatar-editor:image-ready="onImageReady"
-            >
-            </vueAvatar> -->
-            <br>
-            <vueAvatarScale
-              ref="vueavatarscale"
-              @vue-avatar-editor-scale:change-scale="onChangeScale"
-              :width=250
-              :min=1
-              :max=3
-              :step=0.02
-            >
-            </vueAvatarScale>
-            <br>
+          <vueAvatarScale
+            ref="vueavatarscale"
+            @vue-avatar-editor-scale:change-scale="onChangeScale"
+            :width="290"
+            :min="1"
+            :max="3"
+            :step="0.02"
+          >
+          </vueAvatarScale>
+
+          <br>
             <!-- <img src="" id="img-1"> -->
-            <iButton @click="saveClicked" type="success" long>Click</iButton>
-          </div>
+            <iButton @click="saveClicked" type="success" style="margin: 10px 0;">更换头像</iButton>
+<br>
           {{nickname}}
         </h2>
       <div>

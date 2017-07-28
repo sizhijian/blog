@@ -55,11 +55,11 @@
 			},
 			width:{
 				type:Number,
-				default:200
+				default:236
 			},
 			height:{
 				type:Number,
-				default:200
+				default:236
 			},
 			color:{
 				type:Array,
