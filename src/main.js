@@ -6,10 +6,10 @@ import App from './App'
 import router from './router'
 import 'iview/dist/styles/iview.css'
 import axios from 'axios'
-import qs from 'querystring'
+// import qs from 'querystring'
 
 global.CONST_apiUrl = 'http://sizhijian.com:3000';
-// global.CONST_apiUrl = 'http://192.168.1.91:3000';
+// global.CONST_apiUrl = 'http://192.168.1.102:3000';
 
 this.$http = axios.create({
 //   // baseURL: 'http://xxxxxxxxxx',

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <HeaderItem logined=logined isPost=true></HeaderItem>
+    <HeaderItem ref="header" logined=logined :logout="true" isPost=true @handleLogout="handleLogout"></HeaderItem>
     <div class="container">
       <Row>
         <iCol :lg="{span:11, offset: 1}"  :md="{span:10, offset: 1}"  :sm="{span:10, offset: 1}" :xs="{span: 22, offset: 1}">
@@ -47,8 +47,6 @@
 </style>
 <script>
   import HeaderItem from './Header'
-  import marked from 'marked'
-  import Vue from 'vue'
   import axios from 'axios'
   import Store from '../vuex/store'
   import Cookies from 'js-cookie'
@@ -117,11 +115,7 @@
         })
       }
     },
-    computed: {
-      compiledMarkdown: function () {
-        return marked(this.formArticle.content, { sanitize: true })
-      }
-    },
+    computed: {},
     methods: {
       handleSubmit(name){
         this.$refs[name].validate((valid) => {
@@ -169,6 +163,9 @@
       },
       handleReset (name) {
         this.$refs[name].resetFields();
+      },
+      handleLogout() {
+        this.$refs.header.handleReturn('post')
       }
     }
   }

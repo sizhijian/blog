@@ -31,9 +31,9 @@
               <div v-if="item.author" class="wrap-usrinfo">
                 <div class="wrap-avatar" @click="handleShowFull">
                   <img v-if="item.avatarUrl" :src="item.avatarUrl" alt="">
-                  <img v-else src="http://sizhijian.com:3000/files/avatar.png" alt="">
+                  <img v-else src="http://sizhijian.oss-cn-beijing.aliyuncs.com/avatar.png" alt="">
                 </div>
-                <b v-if="item.author">{{item.author}}{{index}}</b>
+                <b v-if="item.author">{{item.author}}</b>
                 <span class="date">{{item.updated_at}}</span>
                 <ButtonGroup v-if="item.isAuthor" class="btn-icon" shape="circle" style="float: right;">
                   <iButton v-if="item.operation" type="ghost" icon="edit" @click="handleEdit(item._id)"></iButton>
@@ -44,7 +44,8 @@
               </div>
               <h3>{{item.title}}&nbsp;<span class="tag">{{item.type}}</span></h3>
               <div class="ql-container ql-snow" style="border: none;">
-                <div v-html="item.body" class="ql-editor" style="padding-left: 0;padding-right: 0;"></div>
+                <div v-html="item.summary.body" class="ql-editor" style="padding-left: 0;padding-right: 0;"></div>
+                <router-link v-if="item.summary.more" :to="'/article/'+item._id">阅读全文</router-link>
               </div>
 
               <a v-if="item.showToggle" class="arrow" @click="handleToggle(index,index)">
@@ -55,13 +56,16 @@
                 <a href="javascript:;" hidden>
                   <Icon type="ios-star-outline" size="20"></Icon>
                   16</a>
-                <a href="javascript:;" @click="handleToggleComment( index )">
+                <router-link :to="'/article/' + item._id">
+                <!-- <a href="javascript:;" @click="handleToggleComment( index )"> -->
                   <Icon type="ios-chatbubble-outline" size="20" style="position: relative;top: 2px"></Icon>
                   <span v-if="item.packUpComment">收起</span>
                   <span v-else>
                     <span v-if="item.comments.length != 0">{{item.comments.length}}</span>
+                    <span v-else>评论</span>
                   </span>
-                </a>
+                <!-- </a> -->
+                </router-link>
               </div>
               <div class="comments" v-if="item.packUpComment">
                 <div class="comment-submit">
@@ -74,7 +78,7 @@
                   <div class="comment-header">
                     <div class="wrap-avatar" @click="handleShowFull">
                       <img v-if="item.avatarUrl" :src="item.avatarUrl" alt="">
-                      <img v-else src="http://sizhijian.com:3000/files/avatar.png" alt="默认头像">
+                      <img v-else src="http://sizhijian.oss-cn-beijing.aliyuncs.com/avatar.png" alt="默认头像">
                     </div>
                     <b>{{item.reviewer}}</b>
                     <!--{{item.isAuthor}}-->
@@ -121,7 +125,6 @@
 </template>
 <script>
 import HeaderItem from './Header'
-import marked from 'marked'
 import Vue from 'vue'
 import axios from 'axios'
 import moment from 'moment'
@@ -322,7 +325,7 @@ export default {
               Message.success(response.data.info);
               //                console.log(typeof this.compiledMarkdown[index].commentContent)
               this.compiledMarkdown[index].commentContent = "";
-              this.fetchData(index);
+              this.fetchData(this.pageNum, index);
             } else {
               Message.error(response.data.info);
             }
@@ -337,6 +340,7 @@ export default {
       this.showFullUrl = event.target.attributes.src.value
     },
     handleToggleComment(index) {
+      // console.log(this.pageNum);
       this.compiledMarkdown[index].packUpComment = !this.compiledMarkdown[index].packUpComment;
     }
   }

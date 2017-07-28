@@ -13,7 +13,6 @@
     "axios": "^0.16.2",
     "iview": "^2.0.0-rc.18",
     "js-cookie": "^2.1.4",
-    "marked": "^0.3.6",
     "md5": "^2.2.1",
     "moment": "^2.18.1",
     "moment-timezone": "^0.5.13",

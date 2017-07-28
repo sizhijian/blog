@@ -17,8 +17,7 @@
           <Icon type="arrow-down-b"></Icon>
         </a>
         <span v-else>
-          <router-link v-if="isPost" to="/login?returnUrl=post">登录</router-link>
-          <router-link v-else to="/login">登录</router-link>
+          <router-link :to="'/login?returnUrl=' + returnUrl">登录</router-link>
         </span>
         <div v-if="showBtn" class="dropdown-menu">
           <div class="dropdown-item">
@@ -143,12 +142,13 @@
 
   export default {
     name: 'header',
-    props: ['home', 'isPost', 'willLogin', "updatedNickname", "requireLogin", "logout"],
+    props: ['home', 'article', 'willLogin', "updatedNickname", "requireLogin", "logout", 'isPost'],
     data() {
       return {
         logined: Store.state.logined,
         nickname: Store.state.nickname,
-        showBtn: false
+        showBtn: false,
+        returnUrl: ""
       }
     },
     components:{ Icon },
@@ -186,6 +186,9 @@
         }
 
 //        this.$router.push({path:'/login'})
+      },
+      handleReturn(loc) {
+        this.returnUrl = loc;
       },
       handlePublish() {
         if (this.logined) {
